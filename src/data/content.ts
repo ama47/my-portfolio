@@ -170,6 +170,8 @@ export interface Content {
   };
   palette: {
     open: string;
+    /** Short form for the narrow rail button, which sits beside a shortcut key. */
+    openShort: string;
     placeholder: string;
     empty: string;
     hintNavigate: string;
@@ -358,6 +360,7 @@ const en: Content = {
   },
   palette: {
     open: 'Open command palette',
+    openShort: 'commands',
     placeholder: 'Type a command or search…',
     empty: 'No matching commands.',
     hintNavigate: 'navigate',
@@ -548,6 +551,7 @@ const ar: Content = {
   },
   palette: {
     open: 'فتح لوحة الأوامر',
+    openShort: 'الأوامر',
     placeholder: 'اكتب أمرًا أو ابحث…',
     empty: 'لا توجد أوامر مطابقة.',
     hintNavigate: 'تنقّل',

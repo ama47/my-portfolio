@@ -47,6 +47,20 @@
     @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-surface rounded-sm;
   }
 
+  /*
+    Opt-out for controls where focus is already unambiguous and a ring would
+    only add visual noise — currently just the command palette input, which is
+    autofocused, carries a caret, and is the sole tab stop inside its dialog.
+
+    This has to be a real rule rather than a `focus-visible:ring-0` utility:
+    Tailwind's ring and shadow utilities both compose the same box-shadow var
+    chain, so they cannot cancel the base rule above.
+  */
+  [data-focus-ring='none']:focus-visible {
+    box-shadow: none;
+    outline: none;
+  }
+
   ::selection {
     @apply bg-primary/20;
   }

@@ -24,7 +24,8 @@ export function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: 
         {!isLast && <span className="absolute top-6 bottom-0 w-px bg-rule" />}
       </div>
 
-      <div className="min-w-0 flex-1 pb-10">
+      {/* The last entry needs no trailing gutter — no line continues past it. */}
+      <div className={`min-w-0 flex-1 ${isLast ? '' : 'pb-10'}`}>
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3 className="text-lg font-semibold text-ink">{entry.title}</h3>
           {entry.current && (

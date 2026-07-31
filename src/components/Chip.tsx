@@ -14,12 +14,19 @@ export function Chip({ children, variant = 'outline' }: ChipProps) {
       ? 'bg-primary text-surface'
       : 'border border-rule bg-surface-alt text-ink-muted';
 
-  return <span className={`${base} ${styles}`}>{children}</span>;
+  // dir sits on the chip, not the list: the label is a Latin technology name
+  // and must read LTR, but the list itself has to flow and align with the
+  // surrounding text, which is RTL in Arabic.
+  return (
+    <span dir="ltr" className={`${base} ${styles}`}>
+      {children}
+    </span>
+  );
 }
 
 export function ChipList({ items }: { items: readonly string[] }) {
   return (
-    <ul className="flex flex-wrap gap-1.5" dir="ltr">
+    <ul className="flex flex-wrap gap-1.5">
       {items.map((item) => (
         <li key={item}>
           <Chip>{item}</Chip>

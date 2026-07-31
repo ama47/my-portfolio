@@ -21,7 +21,7 @@ export function Skills() {
               </span>
             </h3>
 
-            <ul className="flex flex-wrap gap-2" dir="ltr">
+            <ul className="flex flex-wrap gap-2">
               {group.items.map((item) => (
                 <li key={item}>
                   <Chip>{item}</Chip>

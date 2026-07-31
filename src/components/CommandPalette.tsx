@@ -262,7 +262,9 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={t.palette.placeholder}
-            className="w-full bg-transparent py-3.5 font-mono text-sm text-ink placeholder:text-ink-muted/60 focus:outline-none focus-visible:ring-0"
+            // See the opt-out rule in index.css — focus is already obvious here.
+            data-focus-ring="none"
+            className="w-full bg-transparent py-3.5 font-mono text-sm text-ink placeholder:text-ink-muted/60"
           />
         </div>
 

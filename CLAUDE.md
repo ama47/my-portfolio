@@ -82,6 +82,12 @@ Conversely, content that must stay left-to-right in both locales carries an
 explicit `dir="ltr"`: technology chips, dates, email, phone, shell prompts, key
 hints. Keep that when adding similar content.
 
+**Put `dir="ltr"` on the leaf element, never on its list container.** `dir` on a
+container also controls flow and alignment, so a `dir="ltr"` chip list inside an
+Arabic page renders hard against the left margin while the text around it is
+right-aligned. `Chip` carries the `dir`; `ChipList` does not. Same rule for any
+new group of Latin-script items.
+
 ### Section numbering is duplicated — keep it in sync
 
 `SECTION_IDS` in `content.ts` defines section order, and `Nav` derives the
