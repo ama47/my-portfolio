@@ -1,0 +1,105 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Palette lives here as space-separated RGB channels so Tailwind's
+  <alpha-value> syntax works (bg-primary/10, text-ink/70, ...).
+  Change a colour once here and it propagates everywhere.
+*/
+@layer base {
+  :root {
+    --surface: 255 255 255; /* #FFFFFF */
+    --surface-alt: 245 248 255; /* #F5F8FF */
+    --primary: 29 78 216; /* #1D4ED8 */
+    --primary-soft: 219 234 254; /* #DBEAFE */
+    --ink: 11 31 58; /* #0B1F3A */
+    --ink-muted: 74 91 124; /* #4A5B7C */
+    --rule: 219 228 245; /* #DBE4F5 */
+  }
+
+  .dark {
+    --surface: 10 15 26; /* #0A0F1A */
+    --surface-alt: 17 24 39; /* #111827 */
+    --primary: 96 165 250; /* #60A5FA */
+    --primary-soft: 30 58 138; /* #1E3A8A */
+    --ink: 229 237 255; /* #E5EDFF */
+    --ink-muted: 148 163 196; /* #94A3C4 */
+    --rule: 30 42 68; /* #1E2A44 */
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* The sticky mobile bar must not cover the heading we just jumped to. */
+    scroll-padding-top: 5.5rem;
+  }
+
+  body {
+    @apply bg-surface text-ink font-sans antialiased;
+  }
+
+  /* Arabic gets its own face; the mono chrome stays Latin either way. */
+  html[lang='ar'] body {
+    @apply font-arabic;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-surface rounded-sm;
+  }
+
+  ::selection {
+    @apply bg-primary/20;
+  }
+}
+
+@layer components {
+  /*
+    Faint grid, the one piece of "console" texture on the page.
+    Sits behind everything at low opacity so it never fights the text.
+  */
+  .grid-texture {
+    background-image:
+      linear-gradient(to right, rgb(var(--rule) / 0.55) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(var(--rule) / 0.55) 1px, transparent 1px);
+    background-size: 3.5rem 3.5rem;
+  }
+}
+
+@layer utilities {
+  /* Reveal-on-scroll start state; JS adds .is-visible via IntersectionObserver. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  One global escape hatch: anyone who has asked their OS for less motion
+  gets a static page. Covers Tailwind animations, reveals and smooth scroll.
+*/
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
