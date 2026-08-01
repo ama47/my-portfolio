@@ -10,7 +10,6 @@ export function Certifications() {
       id="certifications"
       index="05"
       title={t.sections.certifications.title}
-      kicker={t.sections.certifications.kicker}
     >
       <div className="grid gap-4 sm:grid-cols-2">
         {t.certifications.map((cert) => (

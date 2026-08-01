@@ -126,15 +126,45 @@ Several things look unfinished but are decisions:
   validates, but submitting reports "not configured" instead of faking success,
   so no message is silently lost. Filling in a Formspree URL is the only change
   needed to enable it.
-- **Language proficiency levels are blank.** The source CV lists English and
-  Arabic without levels, and none were invented. `LanguageEntry.level` is
-  optional and renders as soon as it is set.
 - **The Arabic copy was drafted, not authored by the site owner** — especially
   organisation names, which may have official Arabic forms. Flag rather than
   silently rewrite.
 - **No runtime dependencies beyond `react` and `react-dom`.** i18n, theming,
   fuzzy matching and the clipboard helper are all owned in-repo. Prefer adding
-  a small module over a package.
+  a small module over a package. That includes icons: `src/components/icons/`
+  holds inlined path data from Simple Icons (CC0) and Devicon (MIT) rather than
+  an icon package. Brand marks there are set to `currentColor` so they take the
+  surrounding token — Simple Icons no longer ships the AWS or LinkedIn marks,
+  so those two come from Devicon.
+
+  Organisation logos work differently: they live as files in `public/logos/`
+  and are rendered as a **CSS mask over `bg-primary`**, not as `<img>`. That is
+  what tints them with the token in both themes, and it keeps the 100 kB Qassim
+  file out of the JS bundle.
+
+  **A masked logo must be transparent — only its alpha channel is read.** An
+  opaque JPEG or PNG renders as a solid rectangle. Colour, though, is
+  irrelevant: a transparent multi-colour or gradient SVG masks perfectly well,
+  which is why the SDA logo's 187 gradients were flattened to solid black (58%
+  of that file, for no visual effect).
+
+  Transparent vendor SVGs are dropped in as-is; opaque artwork goes through
+  `scripts/logo-to-mask.ps1`, which turns ink coverage into alpha, trims the
+  margins and writes a PNG. Sources live in `assets/logo-sources/` —
+  deliberately outside `public/`, which ships verbatim — and the converted
+  files are committed, so the script is asset prep rather than part of the
+  build. It uses .NET `System.Drawing` and is Windows-only; that is fine
+  precisely because its outputs are committed.
+
+  A full logo lockup is unreadable at the ~44px these render at, so prefer an
+  organisation's **icon asset** over its wordmark where one exists — Qassim
+  publishes one, and it replaced a hand-cropped SVG that clipped the emblem and
+  left glyph fragments behind. Smart Methods has no icon asset, so it is cropped
+  via the script's `-Crop`.
+
+  `OrgMark` in `content.ts` is a discriminated union — its `monogram` variant is
+  currently unused and exists as the fallback for an organisation whose artwork
+  cannot be sourced.
 - **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
   path. The build is plain static files; add host config when a host is chosen.
 - **`tsconfig.json` is a single project with no references.** An earlier

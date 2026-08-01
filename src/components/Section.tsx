@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { useReveal } from '../hooks/useReveal';
-import { Prompt } from './Prompt';
 import type { SectionId } from '../data/content';
 
 interface SectionProps {
@@ -8,17 +7,19 @@ interface SectionProps {
   /** Two-digit index shown in the rule bar, e.g. "02". */
   index: string;
   title: string;
-  kicker: string;
   children: ReactNode;
 }
 
 /**
  * Every section shares one header treatment:
  *
- *   $ git log --author="Abdulaziz"
  *   ── 02 ─ EXPERIENCE ───────────────────────────
+ *
+ * These headers used to carry a shell command above the rule as well. Eight of
+ * them down the page read as noise, so the console motif is now confined to the
+ * hero, where it lands once.
  */
-export function Section({ id, index, title, kicker, children }: SectionProps) {
+export function Section({ id, index, title, children }: SectionProps) {
   const ref = useReveal<HTMLElement>();
 
   return (
@@ -29,8 +30,6 @@ export function Section({ id, index, title, kicker, children }: SectionProps) {
       className="reveal scroll-mt-24 py-14 sm:py-20"
     >
       <header className="mb-8">
-        <Prompt className="mb-3 block">{kicker}</Prompt>
-
         <div className="flex items-center gap-3">
           <span
             aria-hidden="true"

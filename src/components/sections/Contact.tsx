@@ -1,8 +1,9 @@
-import { useState, type FormEvent } from 'react';
+import { useState, type FormEvent, type ReactNode } from 'react';
 import { CONTACT_ENDPOINT } from '../../config';
 import { links } from '../../data/content';
 import { useLocale } from '../../i18n/LocaleProvider';
 import { Section } from '../Section';
+import { GithubIcon, LinkedinIcon, MailIcon, PhoneIcon } from '../icons';
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
 
 type Status = 'idle' | 'submitting' | 'success' | 'error' | 'not-configured';
@@ -75,7 +76,6 @@ export function Contact() {
       id="contact"
       index="08"
       title={t.sections.contact.title}
-      kicker={t.sections.contact.kicker}
     >
       <p className="mb-8 max-w-2xl text-base leading-relaxed text-ink-muted">{t.contact.intro}</p>
 
@@ -140,46 +140,29 @@ export function Contact() {
             {t.contact.directIntro}
           </h3>
 
+          {/* Each row flows with the locale, so the icon lands at the
+              inline-start; dir="ltr" sits on the Latin value alone. Putting it
+              on the row would pin the whole line to the left in Arabic. */}
           <ul className="space-y-3 font-mono text-sm">
             <li>
-              <a
-                href={`mailto:${links.email}`}
-                dir="ltr"
-                className="block truncate text-ink transition-colors hover:text-primary"
-              >
+              <ContactLink href={`mailto:${links.email}`} icon={<MailIcon />}>
                 {links.email}
-              </a>
+              </ContactLink>
             </li>
             <li>
-              <a
-                href={`tel:${links.phone}`}
-                dir="ltr"
-                className="block text-ink transition-colors hover:text-primary"
-              >
+              <ContactLink href={`tel:${links.phone}`} icon={<PhoneIcon />}>
                 {links.phoneDisplay}
-              </a>
+              </ContactLink>
             </li>
             <li>
-              <a
-                href={links.github}
-                target="_blank"
-                rel="noreferrer noopener"
-                dir="ltr"
-                className="block text-ink transition-colors hover:text-primary"
-              >
+              <ContactLink href={links.github} icon={<GithubIcon />} external>
                 github/{links.githubHandle}
-              </a>
+              </ContactLink>
             </li>
             <li>
-              <a
-                href={links.linkedin}
-                target="_blank"
-                rel="noreferrer noopener"
-                dir="ltr"
-                className="block truncate text-ink transition-colors hover:text-primary"
-              >
+              <ContactLink href={links.linkedin} icon={<LinkedinIcon />} external>
                 linkedin/{links.linkedinHandle}
-              </a>
+              </ContactLink>
             </li>
           </ul>
 
@@ -193,6 +176,35 @@ export function Contact() {
         </aside>
       </div>
     </Section>
+  );
+}
+
+function ContactLink({
+  href,
+  icon,
+  external = false,
+  children,
+}: {
+  href: string;
+  icon: ReactNode;
+  external?: boolean;
+  children: ReactNode;
+}) {
+  const externalProps = external ? { target: '_blank', rel: 'noreferrer noopener' } : {};
+
+  return (
+    <a
+      href={href}
+      {...externalProps}
+      className="group flex items-center gap-2.5 text-ink transition-colors hover:text-primary"
+    >
+      <span className="shrink-0 text-ink-muted transition-colors group-hover:text-primary">
+        {icon}
+      </span>
+      <span dir="ltr" className="truncate">
+        {children}
+      </span>
+    </a>
   );
 }
 

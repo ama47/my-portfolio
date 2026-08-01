@@ -9,7 +9,6 @@ export function Languages() {
       id="languages"
       index="07"
       title={t.sections.languages.title}
-      kicker={t.sections.languages.kicker}
     >
       <ul className="grid gap-4 sm:grid-cols-2">
         {t.languages.map((language) => (
@@ -19,9 +18,14 @@ export function Languages() {
           >
             <div className="min-w-0">
               <p className="font-semibold text-ink">{language.name}</p>
-              {/* Only shown once a level is filled in inside content.ts. */}
+              {/* Only shown once a level is filled in inside content.ts. No Chip
+                  here — Chip forces dir="ltr", which is wrong for 'اللغة الأم'. */}
               {language.level && (
-                <p className="mt-0.5 font-mono text-xs text-ink-muted">{language.level}</p>
+                <p className="mt-1.5">
+                  <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-0.5 font-mono text-xs text-primary">
+                    {language.level}
+                  </span>
+                </p>
               )}
             </div>
             <span className="shrink-0 font-mono text-sm text-primary">{language.endonym}</span>

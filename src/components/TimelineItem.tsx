@@ -1,6 +1,45 @@
-import type { TimelineEntry } from '../data/content';
+import type { OrgMark, TimelineEntry } from '../data/content';
 import { useLocale } from '../i18n/LocaleProvider';
 import { ChipList } from './Chip';
+
+/**
+ * One organisation mark on the same plate the certification cards use.
+ *
+ * Logos are masked rather than drawn: the source files are white-on-transparent
+ * SVGs, so using them as a mask over `bg-primary` tints them with the token and
+ * keeps them legible in both themes. It also keeps the Qassim file — 100 kB of
+ * path data — out of the JS bundle, which inlining it would not.
+ */
+function Mark({ mark }: { mark: OrgMark }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-9 w-12 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary sm:h-10 sm:w-14"
+    >
+      {mark.kind === 'monogram' ? (
+        <span dir="ltr" className="font-mono text-xs font-semibold tracking-wider">
+          {mark.label}
+        </span>
+      ) : (
+        <span
+          className={`bg-primary ${
+            mark.shape === 'wide' ? 'h-4 w-10 sm:h-5 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
+          }`}
+          style={{
+            maskImage: `url(${mark.src})`,
+            WebkitMaskImage: `url(${mark.src})`,
+            maskSize: 'contain',
+            WebkitMaskSize: 'contain',
+            maskRepeat: 'no-repeat',
+            WebkitMaskRepeat: 'no-repeat',
+            maskPosition: 'center',
+            WebkitMaskPosition: 'center',
+          }}
+        />
+      )}
+    </span>
+  );
+}
 
 /**
  * One node on the commit-graph timeline. Shared by Experience and Education.
@@ -23,6 +62,16 @@ export function TimelineItem({ entry, isLast }: { entry: TimelineEntry; isLast: 
         />
         {!isLast && <span className="absolute top-6 bottom-0 w-px bg-rule" />}
       </div>
+
+      {/* Marks stack rather than sit side by side, so a jointly run programme
+          keeps the same column width as a single-org entry. */}
+      {entry.marks && entry.marks.length > 0 && (
+        <div className="flex shrink-0 flex-col gap-2">
+          {entry.marks.map((mark) => (
+            <Mark key={mark.kind === 'monogram' ? mark.label : mark.src} mark={mark} />
+          ))}
+        </div>
+      )}
 
       {/* The last entry needs no trailing gutter — no line continues past it. */}
       <div className={`min-w-0 flex-1 ${isLast ? '' : 'pb-10'}`}>

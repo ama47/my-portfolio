@@ -5,7 +5,7 @@ export function Profile() {
   const { t } = useLocale();
 
   return (
-    <Section id="profile" index="01" title={t.sections.profile.title} kicker={t.sections.profile.kicker}>
+    <Section id="profile" index="01" title={t.sections.profile.title}>
       <p className="max-w-3xl text-base leading-relaxed text-ink-muted sm:text-lg">
         {t.profile.body}
       </p>

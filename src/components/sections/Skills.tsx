@@ -6,7 +6,7 @@ export function Skills() {
   const { t } = useLocale();
 
   return (
-    <Section id="skills" index="06" title={t.sections.skills.title} kicker={t.sections.skills.kicker}>
+    <Section id="skills" index="06" title={t.sections.skills.title}>
       <div className="grid gap-4 sm:grid-cols-2">
         {t.skills.map((group) => (
           <div key={group.label} className="rounded-xl border border-rule bg-surface-alt/50 p-5">
