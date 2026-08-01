@@ -103,8 +103,16 @@ const marks = {
 
 /** Issuer names are Latin script in both locales, so they live here too. */
 const issuers = {
-  aws: { name: 'Amazon Web Services', logo: 'aws' },
-  w3schools: { name: 'W3Schools', logo: 'w3schools' },
+  aws: {
+    name: 'Amazon Web Services',
+    logo: 'aws',
+    credentialUrl: 'https://www.credly.com/badges/16ba8d9d-c6d5-40a3-83ce-f84d87b1eef9',
+  },
+  w3schools: {
+    name: 'W3Schools',
+    logo: 'w3schools',
+    credentialUrl: 'https://verify.w3schools.com/1PIAXL5RQ2',
+  },
 } as const;
 
 /** Public repositories behind the projects. Verified public before linking. */
@@ -177,6 +185,8 @@ export interface Certification {
   description: string;
   /** Issuer mark to show instead of the generic award glyph. */
   logo?: 'aws' | 'w3schools';
+  /** Public verification page for the credential. */
+  url?: string;
 }
 
 export interface SkillGroup {
@@ -266,6 +276,8 @@ export interface Content {
     current: string;
     /** Screen-reader suffix on a repository link, which otherwise reads as a bare slug. */
     sourceOnGithub: string;
+    /** Label on a certification's link to its public verification page. */
+    verifyCredential: string;
   };
   footer: { builtWith: string; rights: string };
 }
@@ -392,12 +404,14 @@ const en: Content = {
       name: 'AWS Certified Cloud Practitioner',
       issuer: issuers.aws.name,
       logo: issuers.aws.logo,
+      url: issuers.aws.credentialUrl,
       description: 'Validated understanding of AWS architecture, security, and cloud operations.',
     },
     {
       name: 'C# Certificate',
       issuer: issuers.w3schools.name,
       logo: issuers.w3schools.logo,
+      url: issuers.w3schools.credentialUrl,
       description: 'Validated proficiency in C#, OOP, and .NET development.',
     },
   ],
@@ -468,6 +482,7 @@ const en: Content = {
     close: 'Close',
     current: 'current',
     sourceOnGithub: 'source on GitHub',
+    verifyCredential: 'Verify credential',
   },
   footer: {
     builtWith: 'Built with React, TypeScript, Tailwind CSS and Vite.',
@@ -597,12 +612,14 @@ const ar: Content = {
       name: 'ممارس في الحوسبة السحابية من AWS',
       issuer: issuers.aws.name,
       logo: issuers.aws.logo,
+      url: issuers.aws.credentialUrl,
       description: 'إثبات فهم بنية AWS والأمن وعمليات الحوسبة السحابية.',
     },
     {
       name: 'شهادة C#',
       issuer: issuers.w3schools.name,
       logo: issuers.w3schools.logo,
+      url: issuers.w3schools.credentialUrl,
       description: 'إثبات الإتقان في C# والبرمجة كائنية التوجّه وتطوير .NET.',
     },
   ],
@@ -672,6 +689,7 @@ const ar: Content = {
     close: 'إغلاق',
     current: 'الحالي',
     sourceOnGithub: 'المصدر على GitHub',
+    verifyCredential: 'تحقق من الشهادة',
   },
   footer: {
     builtWith: 'بُني باستخدام React وTypeScript وTailwind CSS وVite.',

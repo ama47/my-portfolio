@@ -55,6 +55,17 @@ export function AwardIcon({ className = 'h-5 w-5' }: IconProps) {
   );
 }
 
+/** Arrow out of a box — used for outbound links to third-party verification pages. */
+export function ExternalLinkIcon({ className = 'h-3.5 w-3.5' }: IconProps) {
+  return (
+    <svg aria-hidden="true" className={className} {...strokeProps}>
+      <path d="M9.5 6.5h-4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-4" />
+      <path d="M14 4.5h5.5V10" />
+      <path d="M19.2 4.8 11 13" />
+    </svg>
+  );
+}
+
 export function GithubIcon({ className = 'h-4 w-4' }: IconProps) {
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24" fill="currentColor">

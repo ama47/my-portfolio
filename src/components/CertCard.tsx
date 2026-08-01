@@ -1,5 +1,6 @@
 import type { Certification } from '../data/content';
-import { AwardIcon, AwsLogo, W3SchoolsLogo } from './icons';
+import { useLocale } from '../i18n/LocaleProvider';
+import { AwardIcon, AwsLogo, ExternalLinkIcon, W3SchoolsLogo } from './icons';
 
 /**
  * Issuer marks are monochrome and inherit the plate's `text-primary`, so they
@@ -12,6 +13,8 @@ function IssuerMark({ logo }: { logo: Certification['logo'] }) {
 }
 
 export function CertCard({ cert }: { cert: Certification }) {
+  const { t } = useLocale();
+
   return (
     <article className="flex gap-4 rounded-xl border border-rule bg-surface-alt/50 p-5">
       {/* Wide enough for the AWS wordmark; a square plate crops it to nothing. */}
@@ -23,6 +26,18 @@ export function CertCard({ cert }: { cert: Certification }) {
         <h3 className="font-semibold leading-snug text-ink">{cert.name}</h3>
         <p className="mt-0.5 font-mono text-xs text-primary">{cert.issuer}</p>
         <p className="mt-2 text-sm leading-relaxed text-ink-muted">{cert.description}</p>
+
+        {cert.url && (
+          <a
+            href={cert.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="mt-3 inline-flex items-center gap-1.5 font-mono text-xs text-ink-muted transition-colors hover:text-primary"
+          >
+            <ExternalLinkIcon className="h-3.5 w-3.5 shrink-0" />
+            {t.ui.verifyCredential}
+          </a>
+        )}
       </div>
     </article>
   );
