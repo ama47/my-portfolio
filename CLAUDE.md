@@ -122,10 +122,26 @@ contiguity and word-boundary bonuses) rather than a dependency.
 
 Several things look unfinished but are decisions:
 
-- **`CONTACT_ENDPOINT` in `src/config.ts` is empty.** The form renders and
+- **The contact form's credentials come from the environment, and a fresh clone
+  has none.** `CONTACT_ENDPOINT` and `CONTACT_ACCESS_KEY` in `src/config.ts`
+  read `VITE_*` variables from `.env` (gitignored; `.env.example` is the
+  committed template). While the endpoint is empty the form still renders and
   validates, but submitting reports "not configured" instead of faking success,
-  so no message is silently lost. Filling in a Formspree URL is the only change
-  needed to enable it.
+  so no message is silently lost — keep that path working.
+
+  The transport is Web3Forms. The access key is **not a secret** — a static site
+  ships it in the bundle regardless; the env var only keeps it out of the repo.
+  So do not add anything to the payload that genuinely needs protecting.
+
+  `access_key` is merged into the body only when non-empty, which is what makes
+  swapping in a self-hosted endpoint a config change rather than a code change.
+  `CONTACT_SUBJECT` lives in `config.ts` rather than `content.ts` on purpose: it
+  is never rendered and lands in the owner's inbox, so the visitor's locale must
+  not choose its language.
+
+  Success is decided by the response body (`success === true`), not the HTTP
+  status — a submission rejected as spam still returns a readable response, and
+  trusting the status alone would report it as sent.
 - **The Arabic copy was drafted, not authored by the site owner** — especially
   organisation names, which may have official Arabic forms. Flag rather than
   silently rewrite.

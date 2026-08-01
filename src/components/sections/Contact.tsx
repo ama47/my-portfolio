@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from 'react';
-import { CONTACT_ENDPOINT } from '../../config';
+import { CONTACT_ACCESS_KEY, CONTACT_ENDPOINT, CONTACT_SUBJECT } from '../../config';
 import { links } from '../../data/content';
 import { useLocale } from '../../i18n/LocaleProvider';
 import { Section } from '../Section';
@@ -25,6 +25,9 @@ export function Contact() {
   const [fields, setFields] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof Fields, string>>>({});
   const [status, setStatus] = useState<Status>('idle');
+  // Honeypot. Kept out of `Fields` so it can never reach `validate()` and
+  // surface an error message to a real person.
+  const [botcheck, setBotcheck] = useState(false);
   const { copied, copy } = useCopyToClipboard();
 
   function validate(values: Fields) {
@@ -52,12 +55,29 @@ export function Contact() {
 
     setStatus('submitting');
     try {
+      // Web3Forms reads `email` as the Reply-To address, so replying in a mail
+      // client reaches the sender rather than yourself. `access_key` is omitted
+      // when unset, keeping the body clean for a self-hosted endpoint later.
+      const body: Record<string, unknown> = {
+        ...fields,
+        subject: CONTACT_SUBJECT,
+        botcheck,
+      };
+      if (CONTACT_ACCESS_KEY) body.access_key = CONTACT_ACCESS_KEY;
+
       const response = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify(fields),
+        body: JSON.stringify(body),
       });
-      if (!response.ok) throw new Error(`Request failed: ${response.status}`);
+
+      // A rejected submission can still arrive as a readable response, so the
+      // payload decides — trusting the status alone would report spam as sent.
+      const result = (await response.json().catch(() => null)) as { success?: boolean } | null;
+      if (!response.ok || result?.success !== true) {
+        throw new Error(`Request failed: ${response.status}`);
+      }
+
       setStatus('success');
       setFields(EMPTY);
     } catch {
@@ -111,6 +131,20 @@ export function Contact() {
             error={errors.message}
             onChange={(value) => update('message', value)}
             multiline
+          />
+
+          {/* Honeypot: hidden from people and from assistive tech, so anything
+              that ticks it is a bot and Web3Forms drops the submission. Being
+              display:none it takes part in no layout, RTL included. */}
+          <input
+            type="checkbox"
+            name="botcheck"
+            checked={botcheck}
+            onChange={(event) => setBotcheck(event.target.checked)}
+            className="hidden"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
           />
 
           <div className="flex flex-wrap items-center gap-4">

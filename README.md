@@ -48,15 +48,32 @@ The form is fully built and validates input, but **ships with no endpoint**.
 Submitting reports "not configured" rather than pretending to send, so no
 message is ever silently lost.
 
-To switch it on, create a form at [formspree.io](https://formspree.io) and set
-the URL in [`src/config.ts`](src/config.ts):
+It posts to [Web3Forms](https://web3forms.com), which needs no account — enter
+your email on their site and a key is sent to you. Then:
 
-```ts
-export const CONTACT_ENDPOINT: string = 'https://formspree.io/f/xxxxxxxx';
+```bash
+cp .env.example .env   # then paste the key into VITE_CONTACT_ACCESS_KEY
 ```
 
-That is the only change needed — the form already POSTs JSON with `name`,
-`email` and `message`.
+Restart the dev server afterwards; Vite reads env files only at startup. On a
+host such as Vercel or Netlify, set the same two variables in its dashboard
+instead of committing them.
+
+Messages arrive with the sender's address as `Reply-To`, so replying in your
+mail client reaches them rather than you.
+
+**The access key is not a secret.** A static site has nothing to hide it behind,
+so it ships inside the JS bundle whatever you do. Keeping it in `.env`
+(gitignored) only keeps it out of the repository, where scraping bots look. The
+worst case is someone burning the monthly quota on mail addressed to you.
+
+Spam protection is a hidden `botcheck` honeypot plus Web3Forms' own filtering.
+Their docs consider the honeypot weak on its own and suggest hCaptcha; that is
+worth adding only if spam actually starts arriving.
+
+To move to a self-hosted endpoint later, point `VITE_CONTACT_ENDPOINT` at it and
+leave `VITE_CONTACT_ACCESS_KEY` empty — the key is only sent when set, and no
+component changes.
 
 ## Features
 
