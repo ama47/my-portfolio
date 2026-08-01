@@ -65,16 +65,18 @@ const tech = {
 } as const;
 
 /**
- * Marks shown beside a timeline entry. Only two of these organisations publish
- * a logo that can be recoloured — Integrify and Qassim University ship
- * single-fill SVGs, which the mask in TimelineItem tints with the primary
- * token. Grenoble Partners publishes only a favicon, Smart Methods a
- * multi-colour raster, and the Saudi Digital Academy's site is offline, so
- * those three carry a monogram rather than a distorted or off-palette logo.
+ * Marks shown beside a timeline entry, all rendered as a mask tinted with the
+ * primary token — see TimelineItem.
+ *
+ * Integrify and Qassim University ship single-fill SVGs. Grenoble Partners and
+ * Smart Methods were supplied as opaque JPEGs and converted to alpha masks by
+ * `scripts/logo-to-mask.ps1`; re-run it if the source artwork changes. The
+ * Saudi Digital Academy has no usable asset — its site is offline — so it keeps
+ * a monogram until one turns up.
  */
 const marks = {
-  grenoble: [{ kind: 'monogram', label: 'GP' }],
-  smartMethods: [{ kind: 'monogram', label: 'SM' }],
+  grenoble: [{ kind: 'logo', src: '/logos/grenoble-partners.png', shape: 'square' }],
+  smartMethods: [{ kind: 'logo', src: '/logos/smart-methods.png', shape: 'square' }],
   // The programme was run by the two organisations jointly, so both appear.
   sda: [
     { kind: 'monogram', label: 'SDA' },

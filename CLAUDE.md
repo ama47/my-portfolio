@@ -137,13 +137,24 @@ Several things look unfinished but are decisions:
   surrounding token — Simple Icons no longer ships the AWS or LinkedIn marks,
   so those two come from Devicon.
 
-  Organisation logos work differently: they live as vendor SVG files in
-  `public/logos/` and are rendered as a **CSS mask over `bg-primary`**, not as
-  `<img>`. That is what tints them with the token in both themes, and it keeps
-  the 100 kB Qassim file out of the JS bundle. The source files must therefore
-  stay single-fill and transparent — a multi-colour or opaque logo cannot be
-  masked, which is why Smart Methods, Grenoble Partners and the Saudi Digital
-  Academy carry monograms instead.
+  Organisation logos work differently: they live as files in `public/logos/`
+  and are rendered as a **CSS mask over `bg-primary`**, not as `<img>`. That is
+  what tints them with the token in both themes, and it keeps the 100 kB Qassim
+  file out of the JS bundle.
+
+  **A masked logo must be transparent — only its alpha channel is read.** An
+  opaque JPEG or PNG renders as a solid rectangle. Vendor SVGs that are already
+  single-fill and transparent (Integrify, Qassim) are dropped in as-is;
+  anything else goes through `scripts/logo-to-mask.ps1`, which turns ink
+  coverage into alpha, trims the margins and writes a PNG. Sources live in
+  `assets/logo-sources/` — deliberately outside `public/`, which ships verbatim
+  — and the converted PNGs are committed, so the script is asset prep rather
+  than part of the build. It uses .NET `System.Drawing` and is Windows-only;
+  that is fine precisely because its outputs are committed.
+
+  The Saudi Digital Academy still carries a monogram: its site is offline and
+  no usable asset exists. `OrgMark` in `content.ts` is a discriminated union, so
+  swapping a monogram for a logo is a one-line change once artwork turns up.
 - **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
   path. The build is plain static files; add host config when a host is chosen.
 - **`tsconfig.json` is a single project with no references.** An earlier
