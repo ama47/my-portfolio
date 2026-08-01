@@ -23,7 +23,7 @@ function Mark({ mark }: { mark: OrgMark }) {
       ) : (
         <span
           className={`bg-primary ${
-            mark.shape === 'wide' ? 'h-4 w-9 sm:h-5 sm:w-11' : 'h-6 w-6 sm:h-7 sm:w-7'
+            mark.shape === 'wide' ? 'h-4 w-10 sm:h-5 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
           }`}
           style={{
             maskImage: `url(${mark.src})`,

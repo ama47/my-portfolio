@@ -143,18 +143,24 @@ Several things look unfinished but are decisions:
   file out of the JS bundle.
 
   **A masked logo must be transparent — only its alpha channel is read.** An
-  opaque JPEG or PNG renders as a solid rectangle. Vendor SVGs that are already
-  single-fill and transparent (Integrify, Qassim) are dropped in as-is;
-  anything else goes through `scripts/logo-to-mask.ps1`, which turns ink
-  coverage into alpha, trims the margins and writes a PNG. Sources live in
-  `assets/logo-sources/` — deliberately outside `public/`, which ships verbatim
-  — and the converted PNGs are committed, so the script is asset prep rather
-  than part of the build. It uses .NET `System.Drawing` and is Windows-only;
-  that is fine precisely because its outputs are committed.
+  opaque JPEG or PNG renders as a solid rectangle. Colour, though, is
+  irrelevant: a transparent multi-colour or gradient SVG masks perfectly well,
+  which is why the SDA logo's 187 gradients were flattened to solid black (58%
+  of that file, for no visual effect).
 
-  The Saudi Digital Academy still carries a monogram: its site is offline and
-  no usable asset exists. `OrgMark` in `content.ts` is a discriminated union, so
-  swapping a monogram for a logo is a one-line change once artwork turns up.
+  Transparent vendor SVGs are dropped in as-is; opaque artwork goes through
+  `scripts/logo-to-mask.ps1`, which turns ink coverage into alpha, trims the
+  margins and writes a PNG. Sources live in `assets/logo-sources/` —
+  deliberately outside `public/`, which ships verbatim — and the converted
+  files are committed, so the script is asset prep rather than part of the
+  build. It uses .NET `System.Drawing` and is Windows-only; that is fine
+  precisely because its outputs are committed.
+
+  Two of the files carry a note at the top recording a crop: a full logo
+  lockup is unreadable at the ~44px these render at, so Qassim and Smart
+  Methods are reduced to their emblems. `OrgMark` in `content.ts` is a
+  discriminated union — its `monogram` variant is currently unused and exists
+  as the fallback for an organisation whose artwork cannot be sourced.
 - **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
   path. The build is plain static files; add host config when a host is chosen.
 - **`tsconfig.json` is a single project with no references.** An earlier
