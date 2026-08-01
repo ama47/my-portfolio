@@ -7,15 +7,9 @@ export function ProjectCard({ project }: { project: Project }) {
   const { t } = useLocale();
 
   return (
-    <article className="group flex h-full flex-col rounded-xl border border-rule bg-surface-alt/50 p-5 transition-colors hover:border-primary/50">
+    <article className="flex h-full flex-col rounded-xl border border-rule bg-surface-alt/50 p-5 transition-colors hover:border-primary/50">
       <header className="flex items-start justify-between gap-3">
         <h3 className="text-base font-semibold leading-snug text-ink">{project.name}</h3>
-        <span
-          aria-hidden="true"
-          className="shrink-0 font-mono text-xs text-ink-muted opacity-60 transition-opacity group-hover:opacity-100"
-        >
-          ./
-        </span>
       </header>
 
       <p className="mt-1 font-mono text-xs text-ink-muted">
