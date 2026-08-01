@@ -126,15 +126,16 @@ Several things look unfinished but are decisions:
   validates, but submitting reports "not configured" instead of faking success,
   so no message is silently lost. Filling in a Formspree URL is the only change
   needed to enable it.
-- **Language proficiency levels are blank.** The source CV lists English and
-  Arabic without levels, and none were invented. `LanguageEntry.level` is
-  optional and renders as soon as it is set.
 - **The Arabic copy was drafted, not authored by the site owner** — especially
   organisation names, which may have official Arabic forms. Flag rather than
   silently rewrite.
 - **No runtime dependencies beyond `react` and `react-dom`.** i18n, theming,
   fuzzy matching and the clipboard helper are all owned in-repo. Prefer adding
-  a small module over a package.
+  a small module over a package. That includes icons: `src/components/icons/`
+  holds inlined path data from Simple Icons (CC0) and Devicon (MIT) rather than
+  an icon package. Brand marks there are set to `currentColor` so they take the
+  surrounding token — Simple Icons no longer ships the AWS or LinkedIn marks,
+  so those two come from Devicon.
 - **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
   path. The build is plain static files; add host config when a host is chosen.
 - **`tsconfig.json` is a single project with no references.** An earlier
