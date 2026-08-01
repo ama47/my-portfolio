@@ -1,9 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { CV_FILENAME, CV_PATH } from '../config';
 import { links } from '../data/content';
 import { useLocale } from '../i18n/LocaleProvider';
 import { usePrefersReducedMotion } from '../hooks/useMediaQuery';
+import { GithubIcon, LinkedinIcon, MailIcon, PhoneIcon } from './icons';
 import { Prompt } from './Prompt';
+
+function HeroLink({
+  href,
+  icon,
+  external = false,
+  children,
+}: {
+  href: string;
+  icon: ReactNode;
+  external?: boolean;
+  children: ReactNode;
+}) {
+  const externalProps = external ? { target: '_blank', rel: 'noreferrer noopener' } : {};
+
+  return (
+    <a
+      href={href}
+      {...externalProps}
+      className="inline-flex items-center gap-2 text-ink-muted transition-colors hover:text-primary"
+    >
+      {icon}
+      <span dir="ltr">{children}</span>
+    </a>
+  );
+}
 
 /** Types out `whoami` once on load. Skipped entirely for reduced motion. */
 function useTypedCommand(command: string, enabled: boolean) {
@@ -95,46 +121,32 @@ export function Hero() {
           </a>
         </div>
 
+        {/* Icons sit at the inline-start of each link and the row flows with
+            the locale; only the Latin value carries dir="ltr". */}
         <ul className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-rule pt-5 font-mono text-xs">
           <li>
-            <a
-              href={`mailto:${links.email}`}
-              dir="ltr"
-              className="text-ink-muted transition-colors hover:text-primary"
-            >
+            <HeroLink href={`mailto:${links.email}`} icon={<MailIcon className="h-3.5 w-3.5" />}>
               {links.email}
-            </a>
+            </HeroLink>
           </li>
           <li>
-            <a
-              href={`tel:${links.phone}`}
-              dir="ltr"
-              className="text-ink-muted transition-colors hover:text-primary"
-            >
+            <HeroLink href={`tel:${links.phone}`} icon={<PhoneIcon className="h-3.5 w-3.5" />}>
               {links.phoneDisplay}
-            </a>
+            </HeroLink>
           </li>
           <li>
-            <a
-              href={links.github}
-              target="_blank"
-              rel="noreferrer noopener"
-              dir="ltr"
-              className="text-ink-muted transition-colors hover:text-primary"
-            >
+            <HeroLink href={links.github} icon={<GithubIcon className="h-3.5 w-3.5" />} external>
               github/{links.githubHandle}
-            </a>
+            </HeroLink>
           </li>
           <li>
-            <a
+            <HeroLink
               href={links.linkedin}
-              target="_blank"
-              rel="noreferrer noopener"
-              dir="ltr"
-              className="text-ink-muted transition-colors hover:text-primary"
+              icon={<LinkedinIcon className="h-3.5 w-3.5" />}
+              external
             >
               linkedin/{links.linkedinHandle}
-            </a>
+            </HeroLink>
           </li>
         </ul>
       </div>

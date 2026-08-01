@@ -10,7 +10,6 @@ export function Experience() {
       id="experience"
       index="02"
       title={t.sections.experience.title}
-      kicker={t.sections.experience.kicker}
     >
       <Timeline entries={t.experience} />
     </Section>

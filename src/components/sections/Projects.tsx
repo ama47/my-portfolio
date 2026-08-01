@@ -10,7 +10,6 @@ export function Projects() {
       id="projects"
       index="03"
       title={t.sections.projects.title}
-      kicker={t.sections.projects.kicker}
     >
       <div className="grid gap-4 sm:grid-cols-2">
         {t.projects.map((project) => (

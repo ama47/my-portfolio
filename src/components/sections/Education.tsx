@@ -10,7 +10,6 @@ export function Education() {
       id="education"
       index="04"
       title={t.sections.education.title}
-      kicker={t.sections.education.kicker}
     >
       <Timeline entries={t.education} />
     </Section>

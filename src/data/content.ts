@@ -64,6 +64,21 @@ const tech = {
   captcha: ['Flutter', 'Dart', 'SQLite'],
 } as const;
 
+/** Issuer names are Latin script in both locales, so they live here too. */
+const issuers = {
+  aws: { name: 'Amazon Web Services', logo: 'aws' },
+  w3schools: { name: 'W3Schools', logo: 'w3schools' },
+} as const;
+
+/** Public repositories behind the projects. Verified public before linking. */
+const repos = {
+  gameStore: [
+    { name: 'game-accessories-store', url: 'https://github.com/ama47/game-accessories-store' },
+    { name: 'game-accessories-api', url: 'https://github.com/ama47/game-accessories-api' },
+  ],
+  captcha: [{ name: 'ArabicLearningGame', url: 'https://github.com/ama47/ArabicLearningGame' }],
+} as const;
+
 const skillItems = {
   technical: [
     'JavaScript',
@@ -98,6 +113,12 @@ export interface TimelineEntry {
   highlight?: { label: string; value: string };
 }
 
+export interface Repo {
+  /** Shown as the link label, so it stays the real repository name. */
+  name: string;
+  url: string;
+}
+
 export interface Project {
   name: string;
   period: string;
@@ -105,12 +126,16 @@ export interface Project {
   tech: readonly string[];
   /** Optional headline outcome shown as a badge. */
   outcome?: string;
+  /** Public repositories, rendered as source links on the card. */
+  repos?: readonly Repo[];
 }
 
 export interface Certification {
   name: string;
   issuer: string;
   description: string;
+  /** Issuer mark to show instead of the generic award glyph. */
+  logo?: 'aws' | 'w3schools';
 }
 
 export interface SkillGroup {
@@ -123,9 +148,9 @@ export interface LanguageEntry {
   /** The language written in its own script. */
   endonym: string;
   /**
-   * Proficiency label. Left undefined on purpose — the CV lists the languages
-   * without levels, and inventing one would be a fabricated credential.
-   * Fill in (e.g. 'Native', 'Professional') when you want them shown.
+   * Proficiency label, supplied by the site owner rather than the CV, which
+   * lists the languages without levels. Optional so a language can be added
+   * without one; the badge only renders when it is set.
    */
   level?: string;
 }
@@ -142,7 +167,7 @@ export interface Content {
     contactCta: string;
   };
   nav: Record<SectionId, string>;
-  sections: Record<SectionId, { title: string; kicker: string }>;
+  sections: Record<SectionId, { title: string }>;
   profile: { body: string };
   experience: readonly TimelineEntry[];
   projects: readonly Project[];
@@ -198,6 +223,8 @@ export interface Content {
     menu: string;
     close: string;
     current: string;
+    /** Screen-reader suffix on a repository link, which otherwise reads as a bare slug. */
+    sourceOnGithub: string;
   };
   footer: { builtWith: string; rights: string };
 }
@@ -232,18 +259,18 @@ const en: Content = {
     contact: 'contact',
   },
   sections: {
-    profile: { title: 'Profile', kicker: 'cat profile.md' },
-    experience: { title: 'Experience', kicker: 'git log --author="Abdulaziz"' },
-    projects: { title: 'Projects', kicker: 'ls -la ./projects' },
-    education: { title: 'Education', kicker: 'cat education.md' },
-    certifications: { title: 'Certifications', kicker: 'ls ./certs' },
-    skills: { title: 'Skills', kicker: 'cat package.json' },
-    languages: { title: 'Languages', kicker: 'locale -a' },
-    contact: { title: 'Contact', kicker: 'mail -s "hello"' },
+    profile: { title: 'Profile' },
+    experience: { title: 'Experience' },
+    projects: { title: 'Projects' },
+    education: { title: 'Education' },
+    certifications: { title: 'Certifications' },
+    skills: { title: 'Skills' },
+    languages: { title: 'Languages' },
+    contact: { title: 'Contact' },
   },
   profile: {
     body:
-      'Full-Stack Developer with hands-on experience designing and optimizing scalable web applications and RESTful APIs. Proficient in leveraging expertise in React.js, Python, and C# to deliver robust system integrations and seamless data flow. Backed by a strong foundation in Computer Science and a history of high-impact project execution, I am eager to contribute to innovative teams that value continuous learning and social impact.',
+      "I'm a Full-Stack Developer with hands-on experience designing and optimizing scalable web applications and RESTful APIs. I work primarily in React.js, Python, and C#, using them to deliver robust system integrations and seamless data flow. With a strong foundation in Computer Science and a history of high-impact project execution behind me, I'm eager to contribute to innovative teams that value continuous learning and social impact.",
   },
   experience: [
     {
@@ -275,6 +302,7 @@ const en: Content = {
       name: 'Game Accessories Store',
       period: periods.gameStore,
       tech: tech.gameStore,
+      repos: repos.gameStore,
       description:
         'Built interactive user interfaces with React, implemented RESTful APIs for seamless communication between the front-end and back-end, and utilized PostgreSQL for efficient and secure data management.',
     },
@@ -283,6 +311,7 @@ const en: Content = {
       period: periods.captcha,
       tech: tech.captcha,
       outcome: '100% final grade',
+      repos: repos.captcha,
       description:
         'Collaborated with a co-member and successfully carried out the project within 3 months. Provided the user interface using the Flutter framework and designed the relational database schema using SQLite to collect research data.',
     },
@@ -316,12 +345,14 @@ const en: Content = {
   certifications: [
     {
       name: 'AWS Certified Cloud Practitioner',
-      issuer: 'Amazon Web Services',
+      issuer: issuers.aws.name,
+      logo: issuers.aws.logo,
       description: 'Validated understanding of AWS architecture, security, and cloud operations.',
     },
     {
       name: 'C# Certificate',
-      issuer: 'W3Schools',
+      issuer: issuers.w3schools.name,
+      logo: issuers.w3schools.logo,
       description: 'Validated proficiency in C#, OOP, and .NET development.',
     },
   ],
@@ -330,8 +361,8 @@ const en: Content = {
     { label: 'Planning', items: skillItems.planning },
   ],
   languages: [
-    { name: 'English', endonym: 'English' },
-    { name: 'Arabic', endonym: 'العربية' },
+    { name: 'English', endonym: 'English', level: 'Professional' },
+    { name: 'Arabic', endonym: 'العربية', level: 'Native' },
   ],
   contact: {
     intro:
@@ -387,6 +418,7 @@ const en: Content = {
     menu: 'Sections',
     close: 'Close',
     current: 'current',
+    sourceOnGithub: 'source on GitHub',
   },
   footer: {
     builtWith: 'Built with React, TypeScript, Tailwind CSS and Vite.',
@@ -424,18 +456,18 @@ const ar: Content = {
     contact: 'التواصل',
   },
   sections: {
-    profile: { title: 'نبذة', kicker: 'cat profile.md' },
-    experience: { title: 'الخبرة العملية', kicker: 'git log --author="Abdulaziz"' },
-    projects: { title: 'المشاريع', kicker: 'ls -la ./projects' },
-    education: { title: 'التعليم', kicker: 'cat education.md' },
-    certifications: { title: 'الشهادات', kicker: 'ls ./certs' },
-    skills: { title: 'المهارات', kicker: 'cat package.json' },
-    languages: { title: 'اللغات', kicker: 'locale -a' },
-    contact: { title: 'التواصل', kicker: 'mail -s "hello"' },
+    profile: { title: 'نبذة' },
+    experience: { title: 'الخبرة العملية' },
+    projects: { title: 'المشاريع' },
+    education: { title: 'التعليم' },
+    certifications: { title: 'الشهادات' },
+    skills: { title: 'المهارات' },
+    languages: { title: 'اللغات' },
+    contact: { title: 'التواصل' },
   },
   profile: {
     body:
-      'مطوّر ويب متكامل يمتلك خبرة عملية في تصميم تطبيقات ويب قابلة للتوسّع وواجهات برمجية RESTful وتحسين أدائها. متمكّن من توظيف خبرته في React.js وPython وC# لتقديم تكاملات قوية بين الأنظمة وتدفّق سلس للبيانات. وبأساس متين في علوم الحاسب وسجلّ من تنفيذ مشاريع عالية الأثر، أتطلّع للإسهام في فرق مبتكرة تُقدّر التعلّم المستمر والأثر الاجتماعي.',
+      'أنا مطوّر ويب متكامل أمتلك خبرة عملية في تصميم تطبيقات ويب قابلة للتوسّع وواجهات برمجية RESTful وتحسين أدائها. أعمل بشكل أساسي بـ React.js وPython وC#، وأوظّفها لتقديم تكاملات قوية بين الأنظمة وتدفّق سلس للبيانات. وبأساس متين في علوم الحاسب وسجلّ من تنفيذ مشاريع عالية الأثر، أتطلّع للإسهام في فرق مبتكرة تُقدّر التعلّم المستمر والأثر الاجتماعي.',
   },
   experience: [
     {
@@ -467,6 +499,7 @@ const ar: Content = {
       name: 'متجر إكسسوارات الألعاب',
       period: periods.gameStore,
       tech: tech.gameStore,
+      repos: repos.gameStore,
       description:
         'بناء واجهات مستخدم تفاعلية باستخدام React، وتنفيذ واجهات برمجية RESTful لتواصل سلس بين الواجهة الأمامية والخلفية، واستخدام PostgreSQL لإدارة البيانات بكفاءة وأمان.',
     },
@@ -475,6 +508,7 @@ const ar: Content = {
       period: periods.captcha,
       tech: tech.captcha,
       outcome: 'درجة نهائية 100%',
+      repos: repos.captcha,
       description:
         'التعاون مع زميل في الفريق وإنجاز المشروع بنجاح خلال ثلاثة أشهر. تقديم واجهة المستخدم باستخدام إطار Flutter، وتصميم مخطط قاعدة البيانات العلائقية باستخدام SQLite لجمع بيانات البحث.',
     },
@@ -508,12 +542,14 @@ const ar: Content = {
   certifications: [
     {
       name: 'AWS Certified Cloud Practitioner',
-      issuer: 'Amazon Web Services',
+      issuer: issuers.aws.name,
+      logo: issuers.aws.logo,
       description: 'إثبات فهم بنية AWS والأمن وعمليات الحوسبة السحابية.',
     },
     {
       name: 'شهادة C#',
-      issuer: 'W3Schools',
+      issuer: issuers.w3schools.name,
+      logo: issuers.w3schools.logo,
       description: 'إثبات الإتقان في C# والبرمجة كائنية التوجّه وتطوير .NET.',
     },
   ],
@@ -522,8 +558,8 @@ const ar: Content = {
     { label: 'مهارات التخطيط', items: skillItems.planning },
   ],
   languages: [
-    { name: 'الإنجليزية', endonym: 'English' },
-    { name: 'العربية', endonym: 'العربية' },
+    { name: 'الإنجليزية', endonym: 'English', level: 'إتقان مهني' },
+    { name: 'العربية', endonym: 'العربية', level: 'اللغة الأم' },
   ],
   contact: {
     intro: 'منفتح على الفرص في تطوير الويب المتكامل والمشكلات المثيرة للاهتمام. أرسل رسالة هنا أو تواصل معي مباشرة.',
@@ -578,6 +614,7 @@ const ar: Content = {
     menu: 'الأقسام',
     close: 'إغلاق',
     current: 'الحالي',
+    sourceOnGithub: 'المصدر على GitHub',
   },
   footer: {
     builtWith: 'بُني باستخدام React وTypeScript وTailwind CSS وVite.',
