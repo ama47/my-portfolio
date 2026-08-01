@@ -122,7 +122,7 @@ const skillItems = {
   backend: ['FastAPI', 'ASP.NET', 'Django', 'PostgreSQL', 'MySQL', 'SQLite', 'REST APIs', 'Microservices', 'WebHooks'],
   cloudTools: ['AWS Cloud', 'Git & GitHub', 'Docker', 'Linux', 'Microsoft Azure', 'Postman', 'Render.com'],
   aiAssisted: ['Claude Code', 'Cursor AI', 'Agentic AI Development'],
-  planning: ['Lucidchart', 'Jira', 'Confluence', 'Slack'],
+  planning: ['Lucidchart', 'Jira', 'Confluence', 'Slack', 'Microsoft Teams', 'Trello', 'Agile Methodologies', 'Scrum'],
 } as const;
 
 // ---------------------------------------------------------------------------
