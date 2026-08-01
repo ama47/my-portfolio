@@ -18,8 +18,8 @@ export function ProjectCard({ project }: { project: Project }) {
         </span>
       </header>
 
-      <p dir="ltr" className="mt-1 font-mono text-xs text-ink-muted">
-        {project.period}
+      <p className="mt-1 font-mono text-xs text-ink-muted">
+        <span dir="ltr">{project.period}</span>
       </p>
 
       {project.outcome && (

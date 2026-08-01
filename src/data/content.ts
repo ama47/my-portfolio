@@ -40,19 +40,32 @@ export const links = {
 
 /** Company and school names stay in Latin script in both locales. */
 const orgs = {
-  grenoble: 'Grenoble Partners',
-  smartMethods: 'Smart Methods',
-  sda: 'Saudi Digital Academy × Integrify',
+  grenoble: { en: 'Grenoble Partners', ar: 'غرونوبل بارتنرز' },
+  smartMethods: { en: 'Smart Methods', ar: 'الأساليب الذكية' },
+  sda: { en: 'Saudi Digital Academy x Integrify', ar: 'الأكاديمية السعودية الرقمية مع انتقرفاي' },
   qassim: { en: 'Qassim University', ar: 'جامعة القصيم' },
 } as const;
 
+/**
+ * Arabic reads the range end-first (e.g. "حتى الآن – 01/2025"), the reverse of
+ * the English start-first order — a deliberate choice by the site owner, so
+ * each entry needs its own en/ar pair rather than sharing one string.
+ *
+ * Grenoble's "حتى الآن" is wrapped in RTL isolate marks (U+2067 … U+2069)
+ * because inside a dir="ltr" span, the bidi algorithm renders an RTL word
+ * next to LTR digits identically regardless of source order — swapping
+ * '01/2025 – حتى الآن' to 'حتى الآن – 01/2025' alone is visually a no-op.
+ * The isolate forces the browser to honour the written left-to-right order
+ * of the two chunks. Verified by measuring rendered glyph positions; do not
+ * remove the isolate marks or the reversal silently regresses.
+ */
 const periods = {
-  grenoble: { en: '01/2025 – present', ar: '01/2025 – حتى الآن' },
-  smartMethods: '06/2023 – 08/2023',
-  sda: '08/2024 – 11/2024',
-  qassim: '08/2019 – 06/2024',
-  gameStore: '08/2024 – 12/2024',
-  captcha: '12/2022 – 06/2023',
+  grenoble: { en: '01/2025 – present', ar: '⁧حتى الآن⁩ – 01/2025' },
+  smartMethods: { en: '06/2023 – 08/2023', ar: '08/2023 – 06/2023' },
+  sda: { en: '08/2024 – 11/2024', ar: '11/2024 – 08/2024' },
+  qassim: { en: '08/2019 – 06/2024', ar: '06/2024 – 08/2019' },
+  gameStore: { en: '08/2024 – 12/2024', ar: '12/2024 – 08/2024' },
+  captcha: { en: '12/2022 – 06/2023', ar: '06/2023 – 12/2022' },
 } as const;
 
 const tech = {
@@ -279,7 +292,7 @@ const en: Content = {
     name: 'Abdulaziz Alsuhaibani',
     role: 'Full-Stack Developer',
     location: 'Riyadh, Saudi Arabia',
-    tagline: 'I build scalable web applications and the APIs that hold them together.',
+    tagline: 'I build scalable web applications and the APIs that hold them together. Interested in building innovative and impactful projects.',
     downloadCv: 'download CV',
     contactCta: 'get in touch',
   },
@@ -310,7 +323,7 @@ const en: Content = {
   experience: [
     {
       title: 'Full-Stack Developer',
-      org: orgs.grenoble,
+      org: orgs.grenoble.en,
       marks: marks.grenoble,
       location: 'Riyadh, Saudi Arabia',
       period: periods.grenoble.en,
@@ -323,10 +336,10 @@ const en: Content = {
     },
     {
       title: 'Web Developer',
-      org: orgs.smartMethods,
+      org: orgs.smartMethods.en,
       marks: marks.smartMethods,
       location: 'Remote',
-      period: periods.smartMethods,
+      period: periods.smartMethods.en,
       tech: tech.smartMethods,
       bullets: [
         'Built a robot control web tasks using HTML/CSS, JavaScript jQuery, and Python.',
@@ -337,7 +350,7 @@ const en: Content = {
   projects: [
     {
       name: 'Game Accessories Store',
-      period: periods.gameStore,
+      period: periods.gameStore.en,
       tech: tech.gameStore,
       repos: repos.gameStore,
       description:
@@ -345,7 +358,7 @@ const en: Content = {
     },
     {
       name: 'CAPTCHA Gamification for Arabic Learning',
-      period: periods.captcha,
+      period: periods.captcha.en,
       tech: tech.captcha,
       outcome: '100% final grade',
       repos: repos.captcha,
@@ -356,10 +369,10 @@ const en: Content = {
   education: [
     {
       title: 'Software Development Program',
-      org: orgs.sda,
+      org: orgs.sda.en,
       marks: marks.sda,
       location: 'Remote',
-      period: periods.sda,
+      period: periods.sda.en,
       tech: tech.sda,
       bullets: [
         'Focused on frontend development with JavaScript, TypeScript, React.js.',
@@ -372,7 +385,7 @@ const en: Content = {
       org: orgs.qassim.en,
       marks: marks.qassim,
       location: 'Qassim, Saudi Arabia',
-      period: periods.qassim,
+      period: periods.qassim.en,
       tech: tech.qassim,
       highlight: { label: 'GPA', value: '4.7 / 5' },
       bullets: [
@@ -471,16 +484,16 @@ const en: Content = {
 
 const ar: Content = {
   meta: {
-    title: 'عبدالعزيز الصهيباني — مطوّر ويب متكامل',
+    title: 'عبدالعزيز السحيباني — مطوّر ويب متكامل',
     description:
       'مطوّر ويب متكامل في الرياض، المملكة العربية السعودية. React.js وPython وC# وASP.NET وPostgreSQL وAWS.',
   },
   hero: {
     greeting: 'whoami',
-    name: 'عبدالعزيز الصهيباني',
+    name: 'عبدالعزيز السحيباني',
     role: 'مطوّر ويب متكامل',
     location: 'الرياض، المملكة العربية السعودية',
-    tagline: 'أبني تطبيقات ويب قابلة للتوسّع وواجهات البرمجة التي تربطها معًا.',
+    tagline: 'أبني تطبيقات ويب قابلة للتوسّع وواجهات البرمجة التي تربطها معًا، مهتم في بناء مشاريع ابداعية و مؤثرة اجتماعياً.',
     downloadCv: 'تحميل السيرة الذاتية',
     contactCta: 'تواصل معي',
   },
@@ -511,7 +524,7 @@ const ar: Content = {
   experience: [
     {
       title: 'مطوّر ويب متكامل',
-      org: orgs.grenoble,
+      org: orgs.grenoble.ar,
       marks: marks.grenoble,
       location: 'الرياض، المملكة العربية السعودية',
       period: periods.grenoble.ar,
@@ -524,21 +537,21 @@ const ar: Content = {
     },
     {
       title: 'مطوّر ويب',
-      org: orgs.smartMethods,
+      org: orgs.smartMethods.ar,
       marks: marks.smartMethods,
       location: 'عن بُعد',
-      period: periods.smartMethods,
+      period: periods.smartMethods.ar,
       tech: tech.smartMethods,
       bullets: [
         'بناء مهام ويب للتحكّم في روبوت باستخدام HTML/CSS وJavaScript jQuery وPython.',
-        'الحصول على شهادة خبرة نظير إتمام 5 مهام بنجاح.',
+        'الحصول على شهادة خبرة بعد إتمام 5 مهام بنجاح.',
       ],
     },
   ],
   projects: [
     {
       name: 'متجر إكسسوارات الألعاب',
-      period: periods.gameStore,
+      period: periods.gameStore.ar,
       tech: tech.gameStore,
       repos: repos.gameStore,
       description:
@@ -546,21 +559,21 @@ const ar: Content = {
     },
     {
       name: 'تحويل اختبار CAPTCHA إلى لعبة لتعلّم العربية',
-      period: periods.captcha,
+      period: periods.captcha.ar,
       tech: tech.captcha,
       outcome: 'درجة نهائية 100%',
       repos: repos.captcha,
       description:
-        'التعاون مع زميل في الفريق وإنجاز المشروع بنجاح خلال ثلاثة أشهر. تقديم واجهة المستخدم باستخدام إطار Flutter، وتصميم مخطط قاعدة البيانات العلائقية باستخدام SQLite لجمع بيانات البحث.',
+        'التعاون مع زميل في الفريق وإنجاز المشروع بنجاح خلال ثلاثة أشهر. تقديم واجهة المستخدم باستخدام إطار Flutter، وتصميم مخطط قاعدة البيانات العلائقية باستخدام SQLite لغرض بحث اكاديمي.',
     },
   ],
   education: [
     {
       title: 'برنامج تطوير البرمجيات',
-      org: orgs.sda,
+      org: orgs.sda.ar,
       marks: marks.sda,
       location: 'عن بُعد',
-      period: periods.sda,
+      period: periods.sda.ar,
       tech: tech.sda,
       bullets: [
         'التركيز على تطوير الواجهات الأمامية باستخدام JavaScript وTypeScript وReact.js.',
@@ -573,7 +586,7 @@ const ar: Content = {
       org: orgs.qassim.ar,
       marks: marks.qassim,
       location: 'القصيم، المملكة العربية السعودية',
-      period: periods.qassim,
+      period: periods.qassim.ar,
       tech: tech.qassim,
       highlight: { label: 'المعدّل', value: '4.7 / 5' },
       bullets: [
@@ -584,7 +597,7 @@ const ar: Content = {
   ],
   certifications: [
     {
-      name: 'AWS Certified Cloud Practitioner',
+      name: 'ممارس في الحوسبة السحابية من AWS',
       issuer: issuers.aws.name,
       logo: issuers.aws.logo,
       description: 'إثبات فهم بنية AWS والأمن وعمليات الحوسبة السحابية.',
@@ -605,7 +618,7 @@ const ar: Content = {
     { name: 'العربية', endonym: 'العربية', level: 'اللغة الأم' },
   ],
   contact: {
-    intro: 'منفتح على الفرص في تطوير الويب المتكامل والمشكلات المثيرة للاهتمام. أرسل رسالة هنا أو تواصل معي مباشرة.',
+    intro: 'متطلع على الفرص في تطوير الويب المتكامل والمشاكل المثيرة للاهتمام. أرسل رسالة هنا أو تواصل معي مباشرة.',
     nameLabel: 'الاسم',
     emailLabel: 'البريد الإلكتروني',
     messageLabel: 'الرسالة',
