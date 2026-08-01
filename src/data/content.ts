@@ -69,11 +69,11 @@ const periods = {
 } as const;
 
 const tech = {
-  grenoble: ['React.js', 'C#', 'ASP.NET', 'Python', 'PostgreSQL', 'REST APIs'],
-  smartMethods: ['HTML/CSS', 'JavaScript', 'jQuery', 'Python'],
-  sda: ['JavaScript', 'TypeScript', 'React.js', 'C#', 'ASP.NET Core', 'Npgsql', 'GitHub'],
-  qassim: ['Software Engineering', 'System Design', 'Computer Networks'],
-  gameStore: ['React', 'REST APIs', 'PostgreSQL'],
+  grenoble: ['React.js', 'FastAPI', 'Python', 'AWS', 'Agentic AI Development', 'C#', 'ASP.NET', 'PostgreSQL', 'REST APIs'],
+  smartMethods: ['HTML/CSS', 'JavaScript', 'jQuery', 'Python', 'PHP', 'GitHub'],
+  sda: ['JavaScript', 'TypeScript', 'React.js', 'C#', 'ASP.NET Core', 'Npgsql', 'GitHub', 'Material-UI'],
+  qassim: ['Software Engineering', 'System Design', 'Computer Networks', 'Data Structures', 'Algorithms', 'OOP', 'Java', 'C/C++', 'Python', 'SQL'],
+  gameStore: ['React', 'REST APIs', 'ASP.NET', 'PostgreSQL'],
   captcha: ['Flutter', 'Dart', 'SQLite'],
 } as const;
 
@@ -117,18 +117,11 @@ const repos = {
 } as const;
 
 const skillItems = {
-  technical: [
-    'JavaScript',
-    'React.js',
-    'Python',
-    'FastAPI',
-    'ASP.NET',
-    'C#',
-    'AWS Cloud',
-    'Postman',
-    'PostgreSQL',
-    'Git & GitHub',
-  ],
+  languages: ['JavaScript', 'TypeScript', 'HTML/CSS', 'Python', 'C#', 'Dart', 'SQL', 'Java', 'C/C++'],
+  frontend: ['React.js', 'Vite', 'Tailwind CSS', 'HTML5', 'Material-UI', 'Bootstrap', 'Flutter'],
+  backend: ['FastAPI', 'ASP.NET', 'Django', 'PostgreSQL', 'MySQL', 'SQLite', 'REST APIs', 'Microservices', 'WebHooks'],
+  cloudTools: ['AWS Cloud', 'Git & GitHub', 'Docker', 'Linux', 'Microsoft Azure', 'Postman', 'Render.com'],
+  aiAssisted: ['Claude Code', 'Cursor AI', 'Agentic AI Development'],
   planning: ['Lucidchart', 'Jira', 'Confluence', 'Slack'],
 } as const;
 
@@ -409,7 +402,11 @@ const en: Content = {
     },
   ],
   skills: [
-    { label: 'Technical', items: skillItems.technical },
+    { label: 'Programming Languages', items: skillItems.languages },
+    { label: 'Frontend', items: skillItems.frontend },
+    { label: 'Backend', items: skillItems.backend },
+    { label: 'Cloud & Tools', items: skillItems.cloudTools },
+    { label: 'AI-Assisted Dev', items: skillItems.aiAssisted },
     { label: 'Planning', items: skillItems.planning },
   ],
   languages: [
@@ -610,8 +607,12 @@ const ar: Content = {
     },
   ],
   skills: [
-    { label: 'المهارات التقنية', items: skillItems.technical },
-    { label: 'مهارات التخطيط', items: skillItems.planning },
+    { label: 'لغات البرمجة', items: skillItems.languages },
+    { label: 'الواجهة الأمامية', items: skillItems.frontend },
+    { label: 'الواجهة الخلفية', items: skillItems.backend },
+    { label: 'السحابة والأدوات', items: skillItems.cloudTools },
+    { label: 'التطوير بمساعدة الذكاء الاصطناعي', items: skillItems.aiAssisted },
+    { label: 'التخطيط', items: skillItems.planning },
   ],
   languages: [
     { name: 'الإنجليزية', endonym: 'English', level: 'إتقان مهني' },
