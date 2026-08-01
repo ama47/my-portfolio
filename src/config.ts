@@ -1,3 +1,5 @@
+import { asset } from './lib/asset';
+
 /**
  * Endpoint the contact form POSTs to. Currently a Web3Forms submit URL.
  *
@@ -33,7 +35,13 @@ export const CONTACT_ACCESS_KEY: string = import.meta.env.VITE_CONTACT_ACCESS_KE
  */
 export const CONTACT_SUBJECT = 'Portfolio contact form';
 
-/** Path to the CV served out of /public. */
-export const CV_PATH = '/Abdulaziz_Alsuhaibani_FullStackDeveloper.pdf';
+/**
+ * Path to the CV served out of /public.
+ *
+ * Resolved through `asset()` because the site is deployed under a base path;
+ * a bare '/…' literal would 404 there. Wrapping the constant rather than its
+ * two consumers (`Hero`, `CommandPalette`) keeps that a single edit.
+ */
+export const CV_PATH = asset('/Abdulaziz_Alsuhaibani_FullStackDeveloper.pdf');
 
 export const CV_FILENAME = 'Abdulaziz_Alsuhaibani_FullStackDeveloper.pdf';

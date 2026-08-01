@@ -1,5 +1,6 @@
 import type { OrgMark, TimelineEntry } from '../data/content';
 import { useLocale } from '../i18n/LocaleProvider';
+import { asset } from '../lib/asset';
 import { ChipList } from './Chip';
 
 /**
@@ -26,8 +27,10 @@ function Mark({ mark }: { mark: OrgMark }) {
             mark.shape === 'wide' ? 'h-4 w-10 sm:h-5 sm:w-12' : 'h-6 w-6 sm:h-7 sm:w-7'
           }`}
           style={{
-            maskImage: `url(${mark.src})`,
-            WebkitMaskImage: `url(${mark.src})`,
+            // Resolved against the deploy base — the paths in content.ts are
+            // root-relative, and Vite does not rewrite literals inside JS.
+            maskImage: `url(${asset(mark.src)})`,
+            WebkitMaskImage: `url(${asset(mark.src)})`,
             maskSize: 'contain',
             WebkitMaskSize: 'contain',
             maskRepeat: 'no-repeat',

@@ -1,0 +1,37 @@
+# Build check for work that is not yet on main.
+#
+# `npm run build` is `tsc --noEmit && vite build` — the repository has no test
+# framework and no linter, so this is the whole gate.
+#
+# Deliberately given no VITE_* values: src/config.ts falls back to '' when they
+# are absent, so the build succeeds without them and this job exercises the
+# "endpoint not configured" path instead of depending on repository settings.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+# Force-pushing a branch supersedes its own in-flight run rather than queueing.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build

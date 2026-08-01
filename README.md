@@ -10,7 +10,7 @@ Single page, no backend, static output.
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+npm run dev      # http://localhost:5173/my-portfolio/
 ```
 
 | Script | What it does |
@@ -55,17 +55,19 @@ your email on their site and a key is sent to you. Then:
 cp .env.example .env   # then paste the key into VITE_CONTACT_ACCESS_KEY
 ```
 
-Restart the dev server afterwards; Vite reads env files only at startup. On a
-host such as Vercel or Netlify, set the same two variables in its dashboard
-instead of committing them.
+Restart the dev server afterwards; Vite reads env files only at startup. For the
+deployed site the same two values come from GitHub Actions settings instead —
+see [Deployment](#deployment).
 
 Messages arrive with the sender's address as `Reply-To`, so replying in your
 mail client reaches them rather than you.
 
-**The access key is not a secret.** A static site has nothing to hide it behind,
-so it ships inside the JS bundle whatever you do. Keeping it in `.env`
-(gitignored) only keeps it out of the repository, where scraping bots look. The
-worst case is someone burning the monthly quota on mail addressed to you.
+**The access key cannot be hidden from visitors.** A static site has nothing to
+hide it behind, so Vite inlines it into the JS bundle whatever you do. Storing
+it in `.env` (gitignored) and as an Actions secret keeps it out of the
+repository and out of build logs, where scraping bots look — but not out of
+devtools. The worst case is someone burning the monthly quota on mail addressed
+to you.
 
 Spam protection is a hidden `botcheck` honeypot plus Web3Forms' own filtering.
 Their docs consider the honeypot weak on its own and suggest hCaptcha; that is
@@ -109,6 +111,28 @@ The palette is defined once as CSS custom properties in `src/index.css`
 
 ## Deployment
 
-The build is plain static files, so `dist/` can be dropped on any host —
-Vercel, Netlify, GitHub Pages, or an S3 bucket. No deployment configuration is
-committed; add it when you pick a host.
+Pushing to `main` builds and publishes the site to GitHub Pages at
+**https://ama47.github.io/my-portfolio/**, via
+[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml). Pull requests
+and pushes to other branches run the same build as a check, without deploying.
+
+Two one-time settings are needed on GitHub:
+
+1. **Settings → Pages → Source: GitHub Actions.** With the default "Deploy from
+   a branch" the workflow runs but the deploy step fails.
+2. **Settings → Secrets and variables → Actions**, at the *repository* level —
+   not under an environment:
+
+   | Name | Where | Value |
+   | --- | --- | --- |
+   | `VITE_CONTACT_ENDPOINT` | Variables | `https://api.web3forms.com/submit` |
+   | `VITE_CONTACT_ACCESS_KEY` | Secrets | your Web3Forms key |
+
+   Both are optional — without them the site still deploys, and the contact
+   form reports "not configured" on submit. Adding them later needs only a
+   re-run.
+
+Because it is served from `/my-portfolio/` rather than a domain root,
+`vite.config.ts` sets `base`, and `public/` paths used from code go through
+`asset()` in `src/lib/asset.ts`. Moving to a custom domain means setting `base`
+back to `'/'` and adding a `CNAME` file to `public/`.

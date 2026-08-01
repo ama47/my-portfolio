@@ -1,0 +1,66 @@
+# Build and publish to GitHub Pages.
+#
+# Requires Settings -> Pages -> Source set to "GitHub Actions"; with the default
+# "Deploy from a branch" the deploy step fails.
+#
+# The contact form's values come from repository-level settings, not
+# environment-level ones: only the `deploy` job declares an environment, so
+# anything scoped to `github-pages` would be invisible to the `build` job that
+# actually runs vite, and the site would ship with an empty key and no error.
+#
+#   vars.VITE_CONTACT_ENDPOINT      https://api.web3forms.com/submit
+#   secrets.VITE_CONTACT_ACCESS_KEY the Web3Forms key
+#
+# Both are optional. Without them the site deploys and works; the contact form
+# renders and validates but reports "not configured" on submit.
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time, and never cancel one that is already publishing —
+# a half-applied deployment is worse than a queued one.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - run: npm run build
+        env:
+          VITE_CONTACT_ENDPOINT: ${{ vars.VITE_CONTACT_ENDPOINT }}
+          VITE_CONTACT_ACCESS_KEY: ${{ secrets.VITE_CONTACT_ACCESS_KEY }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

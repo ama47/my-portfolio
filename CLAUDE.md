@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install
-npm run dev        # dev server on http://localhost:5173
+npm run dev        # dev server on http://localhost:5173/my-portfolio/
 npm run build      # tsc --noEmit, then vite build -> dist/
 npm run preview    # serve the production build
 npm run typecheck  # TypeScript only
@@ -129,9 +129,10 @@ Several things look unfinished but are decisions:
   validates, but submitting reports "not configured" instead of faking success,
   so no message is silently lost — keep that path working.
 
-  The transport is Web3Forms. The access key is **not a secret** — a static site
-  ships it in the bundle regardless; the env var only keeps it out of the repo.
-  So do not add anything to the payload that genuinely needs protecting.
+  The transport is Web3Forms. The access key **cannot be hidden from visitors** —
+  Vite inlines it into the bundle regardless. `.env` and the Actions secret keep
+  it out of the repo and out of build logs, nothing more. So do not add anything
+  to the payload that genuinely needs protecting.
 
   `access_key` is merged into the body only when non-empty, which is what makes
   swapping in a self-hosted endpoint a config change rather than a code change.
@@ -181,8 +182,32 @@ Several things look unfinished but are decisions:
   `OrgMark` in `content.ts` is a discriminated union — its `monogram` variant is
   currently unused and exists as the fallback for an organisation whose artwork
   cannot be sourced.
-- **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
-  path. The build is plain static files; add host config when a host is chosen.
+- **Deployment is GitHub Pages, under a base path.** The site is a *project*
+  page at `ama47.github.io/my-portfolio/`, so `vite.config.ts` sets
+  `base: '/my-portfolio/'` — for dev as well as build, deliberately, so the dev
+  server and production agree and a path that ignores the base fails
+  immediately rather than only once deployed. That is why `npm run dev` serves
+  at `/my-portfolio/`.
+
+  **Vite rewrites root-relative URLs in `index.html` but never inside JS string
+  literals.** Any `public/` path referenced from code must go through
+  `asset()` in `src/lib/asset.ts`, which resolves it against
+  `import.meta.env.BASE_URL`. Currently `CV_PATH` in `config.ts` and the mask
+  `url()` in `TimelineItem`. The `/logos/*` paths in `content.ts` stay
+  root-relative and are resolved at the render site, so `content.ts` remains
+  pure data.
+
+  `.github/workflows/deploy.yml` builds and publishes on push to `main`;
+  `ci.yml` runs `npm run build` on pull requests and on pushes to other
+  branches. CI is given no `VITE_*` values on purpose, so it exercises the
+  unconfigured-endpoint path; `deploy.yml` reads
+  `vars.VITE_CONTACT_ENDPOINT` and `secrets.VITE_CONTACT_ACCESS_KEY`, both
+  repository-level — only the `deploy` job declares an environment, so anything
+  scoped to `github-pages` would not reach the job that runs vite.
+
+  No `.nojekyll` (the Actions path does not run Jekyll) and no SPA 404 fallback
+  (there is no router). A custom domain later means `base: '/'` and a `CNAME`
+  in `public/`.
 - **`tsconfig.json` is a single project with no references.** An earlier
   `tsc -b` + `tsconfig.node.json` setup failed with TS6310 (referenced projects
   may not disable emit). Do not reintroduce project references without also
