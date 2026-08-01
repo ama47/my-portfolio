@@ -64,6 +64,26 @@ const tech = {
   captcha: ['Flutter', 'Dart', 'SQLite'],
 } as const;
 
+/**
+ * Marks shown beside a timeline entry. Only two of these organisations publish
+ * a logo that can be recoloured — Integrify and Qassim University ship
+ * single-fill SVGs, which the mask in TimelineItem tints with the primary
+ * token. Grenoble Partners publishes only a favicon, Smart Methods a
+ * multi-colour raster, and the Saudi Digital Academy's site is offline, so
+ * those three carry a monogram rather than a distorted or off-palette logo.
+ */
+const marks = {
+  grenoble: [{ kind: 'monogram', label: 'GP' }],
+  smartMethods: [{ kind: 'monogram', label: 'SM' }],
+  // The programme was run by the two organisations jointly, so both appear.
+  sda: [
+    { kind: 'monogram', label: 'SDA' },
+    { kind: 'logo', src: '/logos/integrify.svg', shape: 'wide' },
+  ],
+  // Cropped to the emblem in the file itself — see the note at its top.
+  qassim: [{ kind: 'logo', src: '/logos/qassim-university.svg', shape: 'square' }],
+} as const;
+
 /** Issuer names are Latin script in both locales, so they live here too. */
 const issuers = {
   aws: { name: 'Amazon Web Services', logo: 'aws' },
@@ -99,12 +119,23 @@ const skillItems = {
 // Types
 // ---------------------------------------------------------------------------
 
+/**
+ * A logo beside a timeline entry. Purely decorative — the organisation is
+ * always named in text next to it — so neither variant carries a label.
+ */
+export type OrgMark =
+  | { kind: 'monogram'; label: string }
+  /** `shape` sizes the slot: a wordmark needs width, an emblem needs height. */
+  | { kind: 'logo'; src: string; shape: 'wide' | 'square' };
+
 export interface TimelineEntry {
   /** Job title or degree. */
   title: string;
   org: string;
   location: string;
   period: string;
+  /** Organisation marks; more than one where a programme was run jointly. */
+  marks?: readonly OrgMark[];
   bullets: readonly string[];
   tech: readonly string[];
   /** Renders as the active HEAD node on the timeline. */
@@ -276,6 +307,7 @@ const en: Content = {
     {
       title: 'Full-Stack Developer',
       org: orgs.grenoble,
+      marks: marks.grenoble,
       location: 'Riyadh, Saudi Arabia',
       period: periods.grenoble.en,
       current: true,
@@ -288,6 +320,7 @@ const en: Content = {
     {
       title: 'Web Developer',
       org: orgs.smartMethods,
+      marks: marks.smartMethods,
       location: 'Remote',
       period: periods.smartMethods,
       tech: tech.smartMethods,
@@ -320,6 +353,7 @@ const en: Content = {
     {
       title: 'Software Development Program',
       org: orgs.sda,
+      marks: marks.sda,
       location: 'Remote',
       period: periods.sda,
       tech: tech.sda,
@@ -332,6 +366,7 @@ const en: Content = {
     {
       title: 'Bachelor in Computer Science',
       org: orgs.qassim.en,
+      marks: marks.qassim,
       location: 'Qassim, Saudi Arabia',
       period: periods.qassim,
       tech: tech.qassim,
@@ -473,6 +508,7 @@ const ar: Content = {
     {
       title: 'مطوّر ويب متكامل',
       org: orgs.grenoble,
+      marks: marks.grenoble,
       location: 'الرياض، المملكة العربية السعودية',
       period: periods.grenoble.ar,
       current: true,
@@ -485,6 +521,7 @@ const ar: Content = {
     {
       title: 'مطوّر ويب',
       org: orgs.smartMethods,
+      marks: marks.smartMethods,
       location: 'عن بُعد',
       period: periods.smartMethods,
       tech: tech.smartMethods,
@@ -517,6 +554,7 @@ const ar: Content = {
     {
       title: 'برنامج تطوير البرمجيات',
       org: orgs.sda,
+      marks: marks.sda,
       location: 'عن بُعد',
       period: periods.sda,
       tech: tech.sda,
@@ -529,6 +567,7 @@ const ar: Content = {
     {
       title: 'بكالوريوس في علوم الحاسب',
       org: orgs.qassim.ar,
+      marks: marks.qassim,
       location: 'القصيم، المملكة العربية السعودية',
       period: periods.qassim,
       tech: tech.qassim,
