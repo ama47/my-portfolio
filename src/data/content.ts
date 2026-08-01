@@ -83,8 +83,9 @@ const marks = {
     { kind: 'logo', src: '/logos/sda.svg', shape: 'wide' },
     { kind: 'logo', src: '/logos/integrify.svg', shape: 'wide' },
   ],
-  // Cropped to the emblem in the file itself — see the note at its top.
-  qassim: [{ kind: 'logo', src: '/logos/qassim-university.svg', shape: 'square' }],
+  // The university's own icon asset: already the emblem alone, and already
+  // transparent, so it needs no cropping or conversion.
+  qassim: [{ kind: 'logo', src: '/logos/qassim-university.webp', shape: 'square' }],
 } as const;
 
 /** Issuer names are Latin script in both locales, so they live here too. */

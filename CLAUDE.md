@@ -156,11 +156,15 @@ Several things look unfinished but are decisions:
   build. It uses .NET `System.Drawing` and is Windows-only; that is fine
   precisely because its outputs are committed.
 
-  Two of the files carry a note at the top recording a crop: a full logo
-  lockup is unreadable at the ~44px these render at, so Qassim and Smart
-  Methods are reduced to their emblems. `OrgMark` in `content.ts` is a
-  discriminated union — its `monogram` variant is currently unused and exists
-  as the fallback for an organisation whose artwork cannot be sourced.
+  A full logo lockup is unreadable at the ~44px these render at, so prefer an
+  organisation's **icon asset** over its wordmark where one exists — Qassim
+  publishes one, and it replaced a hand-cropped SVG that clipped the emblem and
+  left glyph fragments behind. Smart Methods has no icon asset, so it is cropped
+  via the script's `-Crop`.
+
+  `OrgMark` in `content.ts` is a discriminated union — its `monogram` variant is
+  currently unused and exists as the fallback for an organisation whose artwork
+  cannot be sourced.
 - **No deployment configuration.** No `vercel.json`, no CI workflow, no `base`
   path. The build is plain static files; add host config when a host is chosen.
 - **`tsconfig.json` is a single project with no references.** An earlier
