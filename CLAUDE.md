@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 npm install
-npm run dev        # dev server on http://localhost:5173/my-portfolio/
+npm run dev        # dev server on http://localhost:5173/
 npm run build      # tsc --noEmit, then vite build -> dist/
 npm run preview    # serve the production build
 npm run typecheck  # TypeScript only
@@ -182,12 +182,13 @@ Several things look unfinished but are decisions:
   `OrgMark` in `content.ts` is a discriminated union — its `monogram` variant is
   currently unused and exists as the fallback for an organisation whose artwork
   cannot be sourced.
-- **Deployment is GitHub Pages, under a base path.** The site is a *project*
-  page at `ama47.github.io/my-portfolio/`, so `vite.config.ts` sets
-  `base: '/my-portfolio/'` — for dev as well as build, deliberately, so the dev
-  server and production agree and a path that ignores the base fails
-  immediately rather than only once deployed. That is why `npm run dev` serves
-  at `/my-portfolio/`.
+- **Deployment is Cloudflare Pages, served from the domain root.** `vite.config.ts`
+  sets `base: '/'` — for dev as well as build, deliberately, so the dev server
+  and production agree and a path that ignores the base fails immediately
+  rather than only once deployed. `wrangler.jsonc` at the repo root pins the
+  Pages project name (`my-portfolio`) and build output dir (`dist`) so
+  `wrangler pages deploy` needs no repeated flags, whether run from
+  `.github/workflows/deploy.yml` or locally via `npm run deploy`.
 
   **Vite rewrites root-relative URLs in `index.html` but never inside JS string
   literals.** Any `public/` path referenced from code must go through
@@ -195,19 +196,22 @@ Several things look unfinished but are decisions:
   `import.meta.env.BASE_URL`. Currently `CV_PATH` in `config.ts` and the mask
   `url()` in `TimelineItem`. The `/logos/*` paths in `content.ts` stay
   root-relative and are resolved at the render site, so `content.ts` remains
-  pure data.
+  pure data. `base` is `'/'` today, so this mostly guards against a future
+  subpath deploy rather than fixing a live bug.
 
-  `.github/workflows/deploy.yml` builds and publishes on push to `main`;
+  `.github/workflows/deploy.yml` builds and publishes to Cloudflare Pages on
+  push to `main` via `cloudflare/wrangler-action`, authenticated with the
+  repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
   `ci.yml` runs `npm run build` on pull requests and on pushes to other
   branches. CI is given no `VITE_*` values on purpose, so it exercises the
-  unconfigured-endpoint path; `deploy.yml` reads
-  `vars.VITE_CONTACT_ENDPOINT` and `secrets.VITE_CONTACT_ACCESS_KEY`, both
-  repository-level — only the `deploy` job declares an environment, so anything
-  scoped to `github-pages` would not reach the job that runs vite.
+  unconfigured-endpoint path; `deploy.yml` reads `vars.VITE_CONTACT_ENDPOINT`
+  and `secrets.VITE_CONTACT_ACCESS_KEY`, both repository-level, the same as
+  before.
 
-  No `.nojekyll` (the Actions path does not run Jekyll) and no SPA 404 fallback
-  (there is no router). A custom domain later means `base: '/'` and a `CNAME`
-  in `public/`.
+  No SPA 404 fallback (there is no router). Attaching a custom domain is a
+  Cloudflare dashboard step (Workers & Pages → the project → Custom domains),
+  not a repo change — unlike GitHub Pages, Cloudflare needs no `CNAME` file in
+  `public/`.
 - **`tsconfig.json` is a single project with no references.** An earlier
   `tsc -b` + `tsconfig.node.json` setup failed with TS6310 (referenced projects
   may not disable emit). Do not reintroduce project references without also
