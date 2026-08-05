@@ -2,8 +2,11 @@
 #
 # Requires two repository-level secrets (Settings -> Secrets and variables ->
 # Actions -> Secrets): CLOUDFLARE_API_TOKEN (a token with Pages edit
-# permission) and CLOUDFLARE_ACCOUNT_ID. The first deploy creates the
-# "my-portfolio" Pages project automatically if it doesn't already exist.
+# permission) and CLOUDFLARE_ACCOUNT_ID. The "my-portfolio" Pages project must
+# already exist before the first run — `wrangler pages deploy` only offers to
+# create a missing project interactively, and this workflow is non-interactive.
+# Create it once with `npx wrangler pages project create my-portfolio
+# --production-branch=main` (requires `npx wrangler login` first).
 #
 #   vars.VITE_CONTACT_ENDPOINT      https://api.web3forms.com/submit
 #   secrets.VITE_CONTACT_ACCESS_KEY the Web3Forms key
@@ -34,7 +37,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
