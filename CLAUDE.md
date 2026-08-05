@@ -182,36 +182,39 @@ Several things look unfinished but are decisions:
   `OrgMark` in `content.ts` is a discriminated union — its `monogram` variant is
   currently unused and exists as the fallback for an organisation whose artwork
   cannot be sourced.
-- **Deployment is Cloudflare Pages, served from the domain root.** `vite.config.ts`
-  sets `base: '/'` — for dev as well as build, deliberately, so the dev server
-  and production agree and a path that ignores the base fails immediately
-  rather than only once deployed. `wrangler.jsonc` at the repo root pins the
-  Pages project name (`my-portfolio`) and build output dir (`dist`) so
-  `wrangler pages deploy` needs no repeated flags, whether run from
-  `.github/workflows/deploy.yml` or locally via `npm run deploy`.
+- **Deployment is Cloudflare, served from the domain root, and Cloudflare's own
+  Git integration builds it — not GitHub Actions.** `vite.config.ts` sets
+  `base: '/'` — for dev as well as build, deliberately, so the dev server and
+  production agree and a path that ignores the base fails immediately rather
+  than only once deployed.
 
-  **Vite rewrites root-relative URLs in `index.html` but never inside JS string
-  literals.** Any `public/` path referenced from code must go through
-  `asset()` in `src/lib/asset.ts`, which resolves it against
-  `import.meta.env.BASE_URL`. Currently `CV_PATH` in `config.ts` and the mask
-  `url()` in `TimelineItem`. The `/logos/*` paths in `content.ts` stay
-  root-relative and are resolved at the render site, so `content.ts` remains
-  pure data. `base` is `'/'` today, so this mostly guards against a future
-  subpath deploy rather than fixing a live bug.
+  The `my-portfolio` project (Workers & Pages in the Cloudflare dashboard) is
+  connected directly to this GitHub repo. On push to `main`, Cloudflare clones
+  the repo, runs the **Build command** configured in the project's dashboard
+  settings (`npm run build`), then its default **Deploy command**
+  (`npx wrangler deploy`), which reads [`wrangler.jsonc`](wrangler.jsonc)'s
+  `assets.directory` to find `dist/` and uploads it — no `main` Worker script,
+  just static assets. `wrangler.jsonc`'s `name` must match the dashboard
+  project name exactly, or `wrangler deploy` creates/updates a different
+  Worker instead of this one. `ci.yml` still runs `npm run build` on pull
+  requests and pushes to other branches as a plain check; it does not deploy
+  and is unrelated to the Cloudflare build.
 
-  `.github/workflows/deploy.yml` builds and publishes to Cloudflare Pages on
-  push to `main` via `cloudflare/wrangler-action`, authenticated with the
-  repository secrets `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`;
-  `ci.yml` runs `npm run build` on pull requests and on pushes to other
-  branches. CI is given no `VITE_*` values on purpose, so it exercises the
-  unconfigured-endpoint path; `deploy.yml` reads `vars.VITE_CONTACT_ENDPOINT`
-  and `secrets.VITE_CONTACT_ACCESS_KEY`, both repository-level, the same as
-  before.
+  The contact form's `VITE_CONTACT_ENDPOINT` / `VITE_CONTACT_ACCESS_KEY` are
+  set as environment variables on the Cloudflare project (Settings →
+  Environment variables), not GitHub Actions secrets — Cloudflare's build is
+  what runs `vite build` now, so that's where Vite reads `VITE_*` from. Both
+  are optional; without them the site still deploys and the contact form
+  reports "not configured" on submit.
+
+  `npm run deploy` (`vite build` then `wrangler deploy`) exists for manual,
+  local deploys — mainly useful to test a `wrangler.jsonc` change before
+  pushing, since it needs `npx wrangler login` first and otherwise duplicates
+  what Cloudflare already does on push.
 
   No SPA 404 fallback (there is no router). Attaching a custom domain is a
-  Cloudflare dashboard step (Workers & Pages → the project → Custom domains),
-  not a repo change — unlike GitHub Pages, Cloudflare needs no `CNAME` file in
-  `public/`.
+  Cloudflare dashboard step (the project → Custom domains), not a repo change
+  — unlike GitHub Pages, Cloudflare needs no `CNAME` file in `public/`.
 - **`tsconfig.json` is a single project with no references.** An earlier
   `tsc -b` + `tsconfig.node.json` setup failed with TS6310 (referenced projects
   may not disable emit). Do not reintroduce project references without also

@@ -111,36 +111,34 @@ The palette is defined once as CSS custom properties in `src/index.css`
 
 ## Deployment
 
-Pushing to `main` builds and publishes the site to Cloudflare Pages, via
-[`.github/workflows/deploy.yml`](.github/workflows/deploy.yml) and
-[`wrangler.jsonc`](wrangler.jsonc). Pull requests and pushes to other branches
-run the same build as a check, without deploying.
+Cloudflare's own Git integration builds and publishes the site — pushing to
+`main` triggers a build directly in Cloudflare (Workers & Pages → the
+`my-portfolio` project), not GitHub Actions. `.github/workflows/ci.yml` still
+runs `npm run build` on pull requests and other branches as a check, but
+nothing in `.github/` deploys.
 
-One one-time setting is needed on GitHub — **Settings → Secrets and variables
-→ Actions**, at the *repository* level:
+Two one-time settings live in the Cloudflare dashboard, under the
+`my-portfolio` project's **Settings**:
 
-| Name | Where | Value |
-| --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Secrets | a Cloudflare API token with Pages edit permission |
-| `CLOUDFLARE_ACCOUNT_ID` | Secrets | your Cloudflare account ID |
-| `VITE_CONTACT_ENDPOINT` | Variables | `https://api.web3forms.com/submit` |
-| `VITE_CONTACT_ACCESS_KEY` | Secrets | your Web3Forms key |
+- **Build command**: `npm run build`. Cloudflare's default deploy command
+  (`npx wrangler deploy`) reads [`wrangler.jsonc`](wrangler.jsonc)'s
+  `assets.directory` to find `dist/`, but does not build it — the build
+  command has to run `vite build` first.
+- **Environment variables** (Production, and Preview if you want deploy
+  previews to have a working contact form too):
 
-The Cloudflare Pages project (`my-portfolio`) must exist before the first run —
-`wrangler pages deploy` only offers to create a missing project interactively,
-and Actions runs non-interactively. Create it once, locally:
+  | Name | Value |
+  | --- | --- |
+  | `VITE_CONTACT_ENDPOINT` | `https://api.web3forms.com/submit` |
+  | `VITE_CONTACT_ACCESS_KEY` | your Web3Forms key |
 
-```bash
-npx wrangler login
-npx wrangler pages project create my-portfolio --production-branch=main
-```
+  Both are optional — without them the site still deploys, and the contact
+  form reports "not configured" on submit.
 
-After that, every push to `main` deploys to it. The two `VITE_CONTACT_*`
-values are optional — without them the site still deploys, and the contact
-form reports "not configured" on submit. Adding them later needs only a
-re-run.
+For a one-off manual deploy from your machine: `npm run deploy` (builds, then
+runs `wrangler deploy`); it needs `npx wrangler login` once beforehand.
 
-The site deploys to its default `*.pages.dev` URL until a custom domain is
-attached. That's a Cloudflare dashboard step (Workers & Pages → the project →
-Custom domains) done once a domain is chosen — no repo change, and unlike
-GitHub Pages, no `CNAME` file in `public/`.
+The site deploys to its default `*.workers.dev` URL until a custom domain is
+attached. That's a Cloudflare dashboard step (the project → Custom domains)
+done once a domain is chosen — no repo change, and unlike GitHub Pages, no
+`CNAME` file in `public/`.
