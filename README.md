@@ -56,7 +56,7 @@ cp .env.example .env   # then paste the key into VITE_CONTACT_ACCESS_KEY
 ```
 
 Restart the dev server afterwards; Vite reads env files only at startup. For the
-deployed site the same two values come from GitHub Actions settings instead —
+deployed site the same two values come from the Cloudflare dashboard instead —
 see [Deployment](#deployment).
 
 Messages arrive with the sender's address as `Reply-To`, so replying in your
@@ -111,26 +111,27 @@ The palette is defined once as CSS custom properties in `src/index.css`
 
 ## Deployment
 
-Cloudflare's own Git integration builds and publishes the site — pushing to
-`main` triggers a build directly in Cloudflare (Workers & Pages → the
-`my-portfolio` project), not GitHub Actions. `.github/workflows/ci.yml` still
-runs `npm run build` on pull requests and other branches as a check, but
-nothing in `.github/` deploys.
+Pushing to `main` builds and publishes to
+**[my-portfolio.abdulazizalsuhaibani.workers.dev](https://my-portfolio.abdulazizalsuhaibani.workers.dev)**,
+via Cloudflare's own Git integration (Workers & Pages → the `my-portfolio`
+project), not GitHub Actions. `.github/workflows/ci.yml` still runs
+`npm run build` on pull requests and other branches as a check, but nothing
+in `.github/` deploys.
 
 Two one-time settings live in the Cloudflare dashboard, under the
-`my-portfolio` project's **Settings**:
+`my-portfolio` project's **Settings → Build**:
 
-- **Build command**: `npm run build`. Cloudflare's default deploy command
+- **Build command**: `npm run build`. The **Deploy command**
   (`npx wrangler deploy`) reads [`wrangler.jsonc`](wrangler.jsonc)'s
   `assets.directory` to find `dist/`, but does not build it — the build
   command has to run `vite build` first.
-- **Environment variables** (Production, and Preview if you want deploy
-  previews to have a working contact form too):
+- **Variables and secrets** (Production, and Preview too if you want deploy
+  previews to have a working contact form):
 
-  | Name | Value |
-  | --- | --- |
-  | `VITE_CONTACT_ENDPOINT` | `https://api.web3forms.com/submit` |
-  | `VITE_CONTACT_ACCESS_KEY` | your Web3Forms key |
+  | Name | Type | Value |
+  | --- | --- | --- |
+  | `VITE_CONTACT_ENDPOINT` | Text | `https://api.web3forms.com/submit` |
+  | `VITE_CONTACT_ACCESS_KEY` | Secret | your Web3Forms key |
 
   Both are optional — without them the site still deploys, and the contact
   form reports "not configured" on submit.
