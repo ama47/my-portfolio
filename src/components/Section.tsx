@@ -18,6 +18,12 @@ interface SectionProps {
  * These headers used to carry a shell command above the rule as well. Eight of
  * them down the page read as noise, so the console motif is now confined to the
  * hero, where it lands once.
+ *
+ * The negative scroll-margin cancels the section's own top padding, so jumping
+ * to #id parks the heading at the top of the viewport rather than the empty
+ * padding above it. The sticky mobile bar is handled separately, by
+ * `scroll-padding-top` on <html>. Keep these numbers equal to the `py-*` ones
+ * or the heading drifts down again.
  */
 export function Section({ id, index, title, children }: SectionProps) {
   const ref = useReveal<HTMLElement>();
@@ -27,7 +33,7 @@ export function Section({ id, index, title, children }: SectionProps) {
       id={id}
       ref={ref}
       aria-labelledby={`${id}-heading`}
-      className="reveal scroll-mt-24 py-14 sm:py-20"
+      className="reveal -scroll-mt-14 py-14 sm:-scroll-mt-20 sm:py-20"
     >
       <header className="mb-8">
         <div className="flex items-center gap-3">

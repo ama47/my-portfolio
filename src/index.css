@@ -28,10 +28,23 @@
     --rule: 30 42 68; /* #1E2A44 */
   }
 
+  /*
+    Where an anchor jump parks its target. This is the only offset that should
+    exist besides the negative scroll-margin each section uses to cancel its own
+    top padding — the two used to stack, dropping headings ~240px down the page.
+  */
   html {
     scroll-behavior: smooth;
-    /* The sticky mobile bar must not cover the heading we just jumped to. */
+    /* The sticky mobile bar (~81px) must not cover the heading we jumped to. */
     scroll-padding-top: 5.5rem;
+  }
+
+  /* Desktop has no sticky bar — the nav rail is a side column — so a section
+     can sit flush at the top, with just enough gap to not look clipped. */
+  @media (min-width: 1024px) {
+    html {
+      scroll-padding-top: 1rem;
+    }
   }
 
   body {
